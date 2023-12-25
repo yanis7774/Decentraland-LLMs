@@ -8,5 +8,3 @@ listen(appConfig, Number(process.env.PORT) || 2574);
 
 
 // connectToRoom().then(r => console.log("connected to room"));
-
-

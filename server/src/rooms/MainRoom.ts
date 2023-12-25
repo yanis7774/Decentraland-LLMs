@@ -12,9 +12,11 @@ export class MainRoom extends Room<MainRoomState> {
         this.setSeatReservationTime(60);
         this.maxClients = 100;
 
-        this.onMessage("addEvent", async (client: Client, message) => {
-
-        });
+        this.onMessage("getImage",async (client, msg)=>{
+            // Add prompt generation here
+            // msg.prompt <== PROMPT
+            client.send("setImage", {img: "https://lh3.googleusercontent.com/ci/ALr3YSFwr-NKbqeH7zfQAiaqxY3nWD9pIwv8L8j4Ywr2s_fW9mtFYnRINIw8fd7J2UVCoG2XR3K_ckAE=s1200"})
+        })
     }
 
     async setUp(room: Room) {
@@ -22,16 +24,16 @@ export class MainRoom extends Room<MainRoomState> {
             const prompt: string = "A painting of a glass of water on a table. The painting is very realistic.";
 
             // Generate image using DALL-E
-            const imageResponse = await generateImageWithDALLE(prompt);
-            console.log("imageResponse", imageResponse)
+            //const imageResponse = await generateImageWithDALLE(prompt);
+            //console.log("imageResponse", imageResponse)
 
             // Save the image to a folder
-            const imagePath = saveImageToFileSystem(imageResponse.data);
-            console.log("imagePath", imagePath)
+            //const imagePath = saveImageToFileSystem(imageResponse.data);
+            //console.log("imagePath", imagePath)
 
             // Expose the image URL
-            const imageUrl = exposeImageUrl(await imagePath);
-            console.log("imageUrl", imageUrl)
+            //const imageUrl = exposeImageUrl(await imagePath);
+            //console.log("imageUrl", imageUrl)
 
             // Send the image URL to the client
             // client.send("imageCreated", { imageUrl });
