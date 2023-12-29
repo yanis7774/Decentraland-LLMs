@@ -1,8 +1,9 @@
-import { Client, Room } from "colyseus.js"
-import { getCurrentRealm, isPreviewMode } from "~system/EnvironmentApi"
-import { getUserData } from "~system/UserIdentity"
-import { setRoom } from "./global"
-import { banner } from "./banner"
+import {Client, Room} from "colyseus.js"
+import {getCurrentRealm, isPreviewMode} from "~system/EnvironmentApi"
+import {getUserData} from "~system/UserIdentity"
+import {setRoom} from "./global"
+import {banner} from "./banner"
+
 
 export class NetworkManager {
     client!: Client
@@ -80,9 +81,10 @@ export class NetworkManager {
     }
 
     async addLobbyListeners() {
-        this.room.onMessage("setImage",async (msg)=>{
-            banner.loadAdditionalData(msg.img);
+        this.room.onMessage("setImage", async (msg) => {
             console.log("SET IMAGE: ", msg);
+            banner.loadAdditionalData(msg.img);
+
         })
     }
 }
@@ -96,7 +98,7 @@ export async function getEndpoint() {
     console.log("PREVIEW MODE", isPreview.isPreview);
 
     ENDPOINT = (isPreview.isPreview)
-        ? "http://localhost:2575" // local environment
+        ? "http://localhost:2574" // local environment
         : ""; // production environment insert if needed
 
     console.log("GOT ENDPOINT", ENDPOINT);
@@ -110,7 +112,7 @@ export async function connectionColyseus(userData: any, secondConnection: boolea
         "lobby_room", {
             roomId: "lobby",
             secondConnection: secondConnection
-        },{
+        }, {
             publicKey: userData.publicKey,
             displayName: userData.displayName,
             userId: userData.userId

@@ -6,6 +6,15 @@ import { WebSocketTransport } from  "@colyseus/ws-transport"
 import { LocalPresence, RedisDriver, RedisPresence } from "colyseus";
 import {connectToRoom} from "./rooms/client";
 
+import EventEmitter from "events";
+
+
+const appEmitter = new EventEmitter();
+let appReadyPromiseResolve: (arg0: express.Express) => void;
+const appReadyPromise = new Promise((resolve) => {
+    appReadyPromiseResolve = resolve;
+});
+
 
 export default config({
     getId: () => "Your Colyseus App",
@@ -59,6 +68,10 @@ export default config({
 
         app.use(cors(corsOptionsDelegate))
 
+        appReadyPromiseResolve(app)
+        appEmitter.emit("appReady", app)
+
+
         app.get("/", (req, res) => {
             res.send("It's time to kick ass and chew bubblegum!");
         });
@@ -66,8 +79,12 @@ export default config({
 
         },
 
+
+
     beforeListen: () => {
         connectToRoom()
 
     }
 });
+
+export { appReadyPromise };

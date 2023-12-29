@@ -42,6 +42,7 @@ export class Player extends Schema {
 
 
 
+
 export class MainRoomState extends Schema {
     @type("number") countdown: number;
     @type({map: Player}) users = new MapSchema<Player>();
