@@ -1,4 +1,4 @@
 /server/.env
 /server/package-lock.json
 /server/node_modules
-/server/lib/
+*/server/lib/
