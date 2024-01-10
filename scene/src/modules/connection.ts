@@ -1,8 +1,9 @@
 import {Client, Room} from "colyseus.js"
 import {getCurrentRealm, isPreviewMode} from "~system/EnvironmentApi"
 import {getUserData} from "~system/UserIdentity"
-import {setRoom} from "./global"
+import {receptionist, setRoom} from "./global"
 import {banner} from "./banner"
+import { addInworldResponse } from "./aiResponse"
 
 
 export class NetworkManager {
@@ -85,6 +86,16 @@ export class NetworkManager {
             console.log("SET IMAGE: ", msg);
             banner.loadAdditionalData(msg.img);
 
+        })
+
+        this.room.onMessage("inworldResponse", async (msg) => {
+            console.log("SEND INWORLD");
+            if (msg.npcFlag == "receptionist") {
+                if (receptionist.hasBubble())
+                    addInworldResponse(msg.text);
+                else
+                    receptionist.bubbleMessage(msg.text);
+            }
         })
     }
 }

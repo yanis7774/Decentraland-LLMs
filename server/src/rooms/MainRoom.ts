@@ -4,14 +4,53 @@ import axios from "axios";
 import fs from "fs";
 import path from "path";
 import {appReadyPromise} from "../app.config";
+import { InworldClient, InworldPacket } from "@inworld/nodejs-sdk";
 
 
 export class MainRoom extends Room<MainRoomState> {
+    public inworldClient: any = undefined;
+    public inworldConnection: any = undefined;
+
     onCreate(options: any) {
         this.setState(new MainRoomState());
         this.setUp(this);
         this.setSeatReservationTime(60);
         this.maxClients = 100;
+        
+        this.onMessage("sendInworldMessage", async (client, message) => {
+            const ussder = this.state.users.get(client.sessionId);
+            console.log("SEND INWORLD");
+            if (this.inworldClient != undefined) {
+                this.inworldConnection.sendText(message.text);
+            } else {
+                const inClient = new InworldClient()
+                    .setApiKey({
+                        key: process.env.INWORLD_KEY!,
+                        secret: process.env.INWORLD_SECRET!,
+                    })
+                    .setUser({ fullName: "TestName" })
+                    .setConfiguration({
+                        capabilities: { audio: false, emotions: false },
+                    })
+                    .setScene(process.env.INWORLD_SCENE!)
+                    .setOnError((err: Error) => { })
+                    .setOnMessage((packet: InworldPacket) => {
+                        //console.log(`PACKET: ${packet}`);
+                        if (packet.text != undefined)
+                            client.send("inworldResponse", {
+                                text: packet.text.text,
+                                npcFlag: message.npcFlag
+                            });
+                        if (packet.isInteractionEnd()) {
+                            inworldConnectionTmp.close();
+                        }
+                    });
+                const inworldConnectionTmp = inClient.build();
+                this.inworldClient = inClient;
+                this.inworldConnection = inworldConnectionTmp;
+                await inworldConnectionTmp.sendText(message.text);
+            }
+        })
 
         this.onMessage("getImage", async (client, msg) => {
             // Add prompt generation here

@@ -3,6 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.appReadyPromise = void 0;
 const tools_1 = __importDefault(require("@colyseus/tools"));
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
@@ -10,6 +11,13 @@ const MainRoom_1 = require("./rooms/MainRoom");
 const ws_transport_1 = require("@colyseus/ws-transport");
 const colyseus_1 = require("colyseus");
 const client_1 = require("./rooms/client");
+const events_1 = __importDefault(require("events"));
+const appEmitter = new events_1.default();
+let appReadyPromiseResolve;
+const appReadyPromise = new Promise((resolve) => {
+    appReadyPromiseResolve = resolve;
+});
+exports.appReadyPromise = appReadyPromise;
 exports.default = (0, tools_1.default)({
     getId: () => "Your Colyseus App",
     options: {
@@ -47,6 +55,8 @@ exports.default = (0, tools_1.default)({
             }
         };
         app.use((0, cors_1.default)(corsOptionsDelegate));
+        appReadyPromiseResolve(app);
+        appEmitter.emit("appReady", app);
         app.get("/", (req, res) => {
             res.send("It's time to kick ass and chew bubblegum!");
         });
