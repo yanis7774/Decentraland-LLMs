@@ -5,6 +5,7 @@ import fs from "fs";
 import path from "path";
 import {appReadyPromise} from "../app.config";
 import { InworldClient, InworldPacket } from "@inworld/nodejs-sdk";
+import {getAnswer} from "../llms/rag";
 
 
 export class MainRoom extends Room<MainRoomState> {
@@ -16,41 +17,6 @@ export class MainRoom extends Room<MainRoomState> {
         this.setUp(this);
         this.setSeatReservationTime(60);
         this.maxClients = 100;
-        
-        this.onMessage("sendInworldMessage", async (client, message) => {
-            const ussder = this.state.users.get(client.sessionId);
-            console.log("SEND INWORLD");
-            if (this.inworldClient != undefined) {
-                this.inworldConnection.sendText(message.text);
-            } else {
-                const inClient = new InworldClient()
-                    .setApiKey({
-                        key: process.env.INWORLD_KEY!,
-                        secret: process.env.INWORLD_SECRET!,
-                    })
-                    .setUser({ fullName: "TestName" })
-                    .setConfiguration({
-                        capabilities: { audio: false, emotions: false },
-                    })
-                    .setScene(process.env.INWORLD_SCENE!)
-                    .setOnError((err: Error) => { })
-                    .setOnMessage((packet: InworldPacket) => {
-                        //console.log(`PACKET: ${packet}`);
-                        if (packet.text != undefined)
-                            client.send("inworldResponse", {
-                                text: packet.text.text,
-                                npcFlag: message.npcFlag
-                            });
-                        if (packet.isInteractionEnd()) {
-                            inworldConnectionTmp.close();
-                        }
-                    });
-                const inworldConnectionTmp = inClient.build();
-                this.inworldClient = inClient;
-                this.inworldConnection = inworldConnectionTmp;
-                await inworldConnectionTmp.sendText(message.text);
-            }
-        })
 
         this.onMessage("getImage", async (client, msg) => {
             // Add prompt generation here
@@ -79,37 +45,12 @@ export class MainRoom extends Room<MainRoomState> {
 
     async setUp(room: Room) {
         try {
+            console.log("Setting up lobby room...");
 
+            const answer = await getAnswer("What are the approaches to Task Decomposition?");
 
-            appReadyPromise.then((app) => {
-                // Now you can use `app` here
-                // @ts-ignore
-                app.get(`/test`, (req, res) => {
-                    console.log('This is a new route /test');
-                })
-            });
+            console.log("answer", answer);
 
-            // const prompt: string = "A painting of a glass of water on a table. The painting is very realistic.";
-            // console.log("prompt", prompt)
-
-            // Generate image using DALL-E
-            // const imageResponse = await generateImageWithDALLE(prompt);
-            // // console.log("imageResponse", imageResponse)
-            //
-            // // Save the image to a folder
-            // // const imagePath = saveImageToFileSystem(imageResponse);
-            // // console.log("imagePath", imagePath)
-            //
-            // const imagePath = await saveImageToFile(imageResponse);
-            // console.log("imagePath", imagePath)
-            // //
-            // // Expose the image URL
-            // // @ts-ignore
-            // const imageUrl = exposeImageUrl(imagePath);
-            // console.log("imageUrl", imageUrl)
-
-            // Send the image URL to the client
-            // client.send("imageCreated", { imageUrl });
         } catch (error) {
             console.error("Error in createImage handler:", error);
         }
@@ -154,7 +95,6 @@ async function generateImageWithDALLE(prompt: string) {
     return imageUrl;
 
 }
-
 
 async function saveImageToFile(base64Data: WithImplicitCoercion<string> | {
     [Symbol.toPrimitive](hint: "string"): string;
