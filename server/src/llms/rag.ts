@@ -40,12 +40,24 @@ export async function preLoad() {
 
     const splitDocuments = await splitter.splitDocuments(docs);
 
+    console.log("splitDocuments", splitDocuments)
+
+    const embedings = new HuggingFaceTransformersEmbeddings()
+
+
     const vectorstore = await HNSWLib.fromDocuments(
         splitDocuments,
-        new HuggingFaceTransformersEmbeddings()
+        embedings
+
     );
 
+    console.log("vectorstore", vectorstore)
+
+
     const retriever = vectorstore.asRetriever();
+
+    console.log("retriever", retriever)
+
 
     // const model = new Ollama({
     //     baseUrl: "http://localhost:11434",
