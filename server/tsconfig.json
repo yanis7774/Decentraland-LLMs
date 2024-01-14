@@ -2,14 +2,15 @@
   "compilerOptions": {
     "outDir": "lib",
     "target": "es6",
-    "module": "commonjs",
+    "module": "commonjs", // Changed from commonjs to esnext
     "strict": true,
     "allowJs": true,
     "strictNullChecks": false,
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "forceConsistentCasingInFileNames": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "moduleResolution": "node" // Ensure correct module resolution
   },
   "include": [
     "src"

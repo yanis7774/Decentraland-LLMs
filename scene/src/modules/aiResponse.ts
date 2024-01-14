@@ -1,14 +1,15 @@
 let response_array: string[] = []
 
-export function addInworldResponse(text: string) {
+export async function addLocalLLMResponse(text: string) {
     response_array.push(text);
 }
 
-export function hasInworldResponse() {
+export function haslocalLLMResponse() {
     return response_array.length > 0
 }
 
-export function nextInworldResponse() {
+export function nextLocalLLMResponse() {
+    console.log("response_array", response_array);
     let response = "";
     if (response_array.length) {
         let nextText = response_array[0];

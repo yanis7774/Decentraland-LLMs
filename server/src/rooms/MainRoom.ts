@@ -4,8 +4,8 @@ import axios from "axios";
 import fs from "fs";
 import path from "path";
 import {appReadyPromise} from "../app.config";
-import { InworldClient, InworldPacket } from "@inworld/nodejs-sdk";
-import {getAnswer} from "../llms/rag";
+import {InworldClient, InworldPacket} from "@inworld/nodejs-sdk";
+import {getAnswer, preLoad} from "../llms/rag";
 
 
 export class MainRoom extends Room<MainRoomState> {
@@ -41,15 +41,35 @@ export class MainRoom extends Room<MainRoomState> {
             // client.send("setImage", {img: "https://lh3.googleusercontent.com/ci/ALr3YSFwr-NKbqeH7zfQAiaqxY3nWD9pIwv8L8j4Ywr2s_fW9mtFYnRINIw8fd7J2UVCoG2XR3K_ckAE=s1200"})
             client.send("setImage", {img: imageUrl})
         })
+
+        this.onMessage("getAnswer", async (client, msg) => {
+
+                console.log("msg", msg)
+                const answer = await getAnswer(msg.text);
+
+                console.log("answer", answer.text);
+
+
+                // client.send("getAnswer", {answer: answer.text})
+                client.send("getAnswer", {answer: answer.text, npcFlag:"receptionist"})
+
+
+            }
+        )
     }
 
     async setUp(room: Room) {
         try {
             console.log("Setting up lobby room...");
 
-            const answer = await getAnswer("What are the approaches to Task Decomposition?");
+            preLoad()
 
-            console.log("answer", answer);
+            // const answer = await getAnswer("What are the approaches to Task Decomposition?");
+            // const answer = await getAnswer("How can I start to play?");
+            // const answer = await getAnswer("Do I need a real money to play?");
+            //
+            // console.log("answer", answer.text);
+            // console.log("answer", answer);
 
         } catch (error) {
             console.error("Error in createImage handler:", error);

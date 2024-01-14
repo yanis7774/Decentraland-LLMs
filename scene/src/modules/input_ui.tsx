@@ -150,6 +150,7 @@ export const inputUI = () => {
                         onMouseDown={() => {
                             closeInput(true)
                         }}
+
                         uiBackground={{
                             texture: {src: resources.images.ui.buttons.noButton.src},
                             textureMode: 'stretch',

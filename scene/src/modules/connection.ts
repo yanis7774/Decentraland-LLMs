@@ -3,7 +3,7 @@ import {getCurrentRealm, isPreviewMode} from "~system/EnvironmentApi"
 import {getUserData} from "~system/UserIdentity"
 import {receptionist, setRoom} from "./global"
 import {banner} from "./banner"
-import { addInworldResponse } from "./aiResponse"
+import { addLocalLLMResponse } from "./aiResponse"
 
 
 export class NetworkManager {
@@ -81,6 +81,7 @@ export class NetworkManager {
         }
     }
 
+
     async addLobbyListeners() {
         this.room.onMessage("setImage", async (msg) => {
             console.log("SET IMAGE: ", msg);
@@ -88,17 +89,25 @@ export class NetworkManager {
 
         })
 
-        this.room.onMessage("inworldResponse", async (msg) => {
-            console.log("SEND INWORLD");
+        this.room.onMessage("getAnswer", async (msg) => {
+            console.log("SEND Local LLMs", msg.answer);
+
             if (msg.npcFlag == "receptionist") {
+                console.log('msg.npcFlag == "receptionist"');
+                console.log("receptionist.hasBubble()", receptionist.hasBubble());
+
+
                 if (receptionist.hasBubble())
-                    addInworldResponse(msg.text);
+                    addLocalLLMResponse(msg.answer);
                 else
-                    receptionist.bubbleMessage(msg.text);
+                    receptionist.bubbleMessage(msg.answer);
             }
+
         })
     }
 }
+
+
 
 export async function getEndpoint() {
     const isPreview = await isPreviewMode({});

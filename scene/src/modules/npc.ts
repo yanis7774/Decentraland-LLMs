@@ -3,7 +3,7 @@ import { TextBubble } from "./bubble";
 import { Quaternion, Vector3 } from "@dcl/sdk/math";
 import { invokeInput } from "./input_ui";
 import { globalRoom } from "./global";
-import { hasInworldResponse, nextInworldResponse } from "./aiResponse";
+import { haslocalLLMResponse, nextLocalLLMResponse } from "./aiResponse";
 
 export class ReceptionNpc {
     receptionEntity: Entity;
@@ -54,21 +54,27 @@ export class ReceptionNpc {
             if (inputSystem.isTriggered(InputAction.IA_POINTER, PointerEventType.PET_DOWN, this.pointerCollider)) {
                 if (!this.hasBubble()) {
                     invokeInput(
-                        "Reception",
-                        "Ask me anything!",
+                        "ICE POKER HELPER!",
+                        "Let's play",
                         (input: string)=>{
                             if (globalRoom) {
-                                globalRoom.send("sendInworldMessage",{
+
+                                globalRoom.send("getAnswer",{
                                     text: input,
                                     npcFlag: "receptionist"
                                 })
+                                // this.bubble.invokeBubbleText("Wait a second...", 1  )
                             }
                     })
+
                 } else {
                     this.nextDialogue();
                 }
             }
         });
+
+
+        // this.bubble.invokeBubbleText("")
     }
 
     bubbleMessage(text: string, duration: number = -1) {
@@ -80,10 +86,13 @@ export class ReceptionNpc {
     }
 
     nextDialogue() {
-        if (hasInworldResponse()) {
-            this.bubbleMessage(nextInworldResponse());
+
+        if (haslocalLLMResponse()) {
+            this.bubbleMessage(nextLocalLLMResponse());
         } else {
             this.bubble.closeTextBubble();
         }
     }
+
+
 }

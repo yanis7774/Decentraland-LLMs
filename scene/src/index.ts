@@ -16,6 +16,7 @@ export function main() {
         const data = await getUserData({});
         await connectionColyseus(data.data);
 
+
         setupUi();
         //new CustomPainting();
         setReceptionist(new ReceptionNpc(
