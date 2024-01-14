@@ -62,7 +62,17 @@ export class MainRoom extends Room<MainRoomState> {
         try {
             console.log("Setting up lobby room...");
 
-            preLoad()
+
+            // Using setTimeout to set a timeout
+            setTimeout(function () {
+                preLoad()
+                // Your code to be executed after the timeout
+                console.log("Timeout is up! This code runs after a delay.");
+            }, 2000); // 2000 milliseconds (2 seconds) delay
+
+
+
+
 
             // const answer = await getAnswer("What are the approaches to Task Decomposition?");
             // const answer = await getAnswer("How can I start to play?");
