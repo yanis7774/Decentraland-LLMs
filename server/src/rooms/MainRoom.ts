@@ -68,7 +68,7 @@ export class MainRoom extends Room<MainRoomState> {
                 preLoad()
                 // Your code to be executed after the timeout
                 console.log("Timeout is up! This code runs after a delay.");
-            }, 2000); // 2000 milliseconds (2 seconds) delay
+            }, 4000); // 2000 milliseconds (2 seconds) delay
 
 
 
