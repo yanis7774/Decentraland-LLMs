@@ -31,7 +31,7 @@ export async function preLoad() {
     const docs = await loader.load();
     // const docs = await loader.load();
 
-    console.log("docs1", docs)
+    console.log("docs1", docs[0])
 
     const splitter = new RecursiveCharacterTextSplitter({
         chunkSize: 512,
@@ -40,9 +40,11 @@ export async function preLoad() {
 
     const splitDocuments = await splitter.splitDocuments(docs);
 
-    console.log("splitDocuments", splitDocuments)
+    console.log("splitDocuments", splitDocuments[0])
 
     const embedings = new HuggingFaceTransformersEmbeddings()
+
+    console.log("splitDocuments", splitDocuments)
 
 
     const vectorstore = await HNSWLib.fromDocuments(
@@ -52,7 +54,6 @@ export async function preLoad() {
     );
 
     console.log("vectorstore", vectorstore)
-
 
     const retriever = vectorstore.asRetriever();
 
