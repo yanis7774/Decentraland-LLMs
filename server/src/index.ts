@@ -4,7 +4,7 @@ import { listen } from "@colyseus/tools";
 import appConfig from "./app.config";
 
 // Create and listen on 2567 (or PORT environment variable.)
-listen(appConfig, Number(process.env.PORT) || 2574);
+listen(appConfig, Number(process.env.PORT) || 3029);
 
 
 // connectToRoom().then(r => console.log("connected to room"));

@@ -2,9 +2,9 @@
 	"ecs7": true,
 	"runtimeVersion": "7",
 	"display": {
-		"title": "SDK7 Scene Template",
-		"description": "template scene with SDK7",
-		"navmapThumbnail": "images/scene-thumbnail.png",
+		"title": "AI Chat Bots for Metaverse",
+		"description": "AI Chat Bots for Metaverse. https://twitter.com/TonyMo74",
+		"navmapThumbnail": "images/thumbnail.png",
 		"favicon": "favicon_asset"
 	},
 	"owner": "",
@@ -16,9 +16,9 @@
 	"tags": [],
 	"scene": {
 		"parcels": [
-			"0,0"
+			"55,-42"
 		],
-		"base": "0,0"
+		"base": "55,-42"
 	},
 	"spawnPoints": [
 		{

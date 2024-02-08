@@ -3,8 +3,8 @@ import {getCurrentRealm, isPreviewMode} from "~system/EnvironmentApi"
 import {getUserData} from "~system/UserIdentity"
 import {receptionist, setRoom} from "./global"
 import {banner} from "./banner"
-import { addLocalLLMResponse } from "./aiResponse"
-
+import {addLocalLLMResponse} from "./aiResponse"
+import {AudioStream, engine} from "@dcl/sdk/ecs";
 
 export class NetworkManager {
     client!: Client
@@ -81,7 +81,6 @@ export class NetworkManager {
         }
     }
 
-
     async addLobbyListeners() {
         this.room.onMessage("setImage", async (msg) => {
             console.log("SET IMAGE: ", msg);
@@ -101,13 +100,25 @@ export class NetworkManager {
                     addLocalLLMResponse(msg.answer);
                 else
                     receptionist.bubbleMessage(msg.answer);
+
+
+                const voiceUrl = msg.voiceUrl;
+                console.log("voiceUrl", voiceUrl);
+
+                const streamEntity = engine.addEntity()
+
+                AudioStream.create(streamEntity, {
+                    url: voiceUrl,
+                    playing: true,
+                    volume: 0.8,
+                })
+
+
             }
 
         })
     }
 }
-
-
 
 export async function getEndpoint() {
     const isPreview = await isPreviewMode({});
@@ -118,8 +129,8 @@ export async function getEndpoint() {
     console.log("PREVIEW MODE", isPreview.isPreview);
 
     ENDPOINT = (isPreview.isPreview)
-        ? "http://localhost:2574" // local environment
-        : ""; // production environment insert if needed
+        ? "http://localhost:3029" // local environment
+        : "https://sdk7.mrt.games/serverAI"; // production environment insert if needed
 
     console.log("GOT ENDPOINT", ENDPOINT);
 
