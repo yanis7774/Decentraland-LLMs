@@ -1,11 +1,9 @@
 import * as npc from 'dcl-npc-toolkit'
+import {Dialog} from 'dcl-npc-toolkit'
 import {Quaternion, Vector3} from "@dcl/sdk/math";
 import {NPCBodyType} from "dcl-npc-toolkit/dist/types";
-import { getPlayerData } from '~system/Players'
 import {getUserData} from "~system/UserIdentity";
 import {extractName} from "../utils/utils";
-import {Dialog} from "dcl-npc-toolkit";
-
 
 export let NPCTalk: Dialog[] = [
     {
@@ -21,9 +19,6 @@ export let NPCTalk: Dialog[] = [
         isEndOfDialog: true,
     },
 ]
-
-
-
 
 export let myNPC = npc.create(
     {

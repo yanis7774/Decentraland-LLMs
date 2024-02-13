@@ -15,7 +15,6 @@ export function main() {
         const data = await getUserData({});
         await connectionColyseus(data.data);
 
-
         setupUi();
 
         const npcEntity = myNPC

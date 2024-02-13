@@ -1,15 +1,12 @@
-import axios from "axios";
 import fs from "fs";
 import path from "path";
 import { appReadyPromise } from "../../app.config";
 import OpenAI from "openai";
 import { Audio } from "openai/resources";
 import SpeechCreateParams = Audio.SpeechCreateParams;
-
 require('dotenv').config();
 
 const openai = new OpenAI({ apiKey: process.env.OPEN_API_KEY });
-
 
 export async function getTextAndVoice(systemMessage: string, prompt: string, voiceModel = 'alloy') {
     try {
@@ -28,7 +25,6 @@ export async function getTextAndVoice(systemMessage: string, prompt: string, voi
         throw error;
     }
 }
-
 
 export async function getOpenAIAnswer(systemMessage: string, prompt: string) {
     try {
@@ -100,8 +96,6 @@ export function exposeVoiceUrl(voicePath: string) {
     return `http://localhost:3029${urlPath}`;
 }
 
-
-
 export async function generateImageWithDALLE(prompt: string) {
     try {
         const response = await openai.images.generate({
@@ -116,8 +110,6 @@ export async function generateImageWithDALLE(prompt: string) {
         throw new Error(`Error generating image: ${error}`);
     }
 }
-
-
 
 export async function saveImageToFile(base64Data: WithImplicitCoercion<string> | {
     [Symbol.toPrimitive](hint: "string"): string;
