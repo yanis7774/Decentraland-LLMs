@@ -7,6 +7,7 @@ import { LocalPresence, RedisDriver, RedisPresence } from "colyseus";
 import {connectToRoom} from "./rooms/client";
 
 import EventEmitter from "events";
+import path from "path";
 
 
 const appEmitter = new EventEmitter();
@@ -47,7 +48,6 @@ export default config({
         app.use(express.json());
         app.use(express.urlencoded({extended: true, limit: "10kb"}));
 
-
         const allowlist = ['https://play.decentraland.org', 'https://play.decentraland.zone']
         const corsOptionsDelegate = (req: any, callback: any) => {
 
@@ -62,8 +62,6 @@ export default config({
             } catch (e) {
                 console.log("Error in cors option delegate", e)
             }
-
-
         }
 
         app.use(cors(corsOptionsDelegate))
@@ -75,6 +73,7 @@ export default config({
         app.get("/", (req, res) => {
             res.send("It's time to kick ass and chew bubblegum!");
         });
+        app.use('/voices', express.static(path.join(__dirname,'../voices')));
 
 
         },

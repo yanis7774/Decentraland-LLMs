@@ -5,6 +5,8 @@ import {receptionist, setRoom} from "./global"
 import {banner} from "./banner"
 import {addLocalLLMResponse} from "./aiResponse"
 import {AudioStream, engine} from "@dcl/sdk/ecs";
+import { openDialogWindow } from "dcl-npc-toolkit-ai-version"
+import { myNPC } from "../GameObjects/NPC"
 
 export class NetworkManager {
     client!: Client
@@ -89,21 +91,10 @@ export class NetworkManager {
         })
 
         this.room.onMessage("getAnswer", async (msg) => {
-            console.log("SEND Local LLMs", msg.answer);
 
             if (msg.npcFlag == "receptionist") {
-                console.log('msg.npcFlag == "receptionist"');
-                console.log("receptionist.hasBubble()", receptionist.hasBubble());
-
-
-                if (receptionist.hasBubble())
-                    addLocalLLMResponse(msg.answer);
-                else
-                    receptionist.bubbleMessage(msg.answer);
-
 
                 const voiceUrl = msg.voiceUrl;
-                console.log("voiceUrl", voiceUrl);
 
                 const streamEntity = engine.addEntity()
 
@@ -112,10 +103,7 @@ export class NetworkManager {
                     playing: true,
                     volume: 0.8,
                 })
-
-
             }
-
         })
     }
 }

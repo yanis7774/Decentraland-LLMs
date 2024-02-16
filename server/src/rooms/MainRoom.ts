@@ -31,7 +31,7 @@ export class MainRoom extends Room<MainRoomState> {
 
 
                 // @ts-ignore
-                const {answer, voiceUrl} = await getTextAndVoice(systemMessage, msg.text);
+                const {openAIResponse, exposedUrl} = await getTextAndVoice(systemMessage, msg.text);
 
                 // const answer = await getOpenAIAnswer(systemMessage, msg.text);
                 // console.log('OpenAI Answer:', answer.message.content);
@@ -39,13 +39,16 @@ export class MainRoom extends Room<MainRoomState> {
                 // const voiceResponse = await generateAndSaveVoiceOver(answer.message.content);
 
 
+                console.log("ANSWER: ", openAIResponse);
+                console.log("VOICE URL: ", exposedUrl);
                 client.send("getAnswer", {
-                    answer: answer.text,
+                    answer: openAIResponse,
                     npcFlag: "receptionist",
-                    voiceUrl: voiceUrl
+                    voiceUrl: exposedUrl,
+                    id: msg.id
                 });
 
-                client.send("getAnswer", {answer: answer, npcFlag: "receptionist"})
+                //client.send("getAnswer", {answer: answer, npcFlag: "receptionist"})
 
             }
         )
@@ -101,7 +104,3 @@ export class MainRoom extends Room<MainRoomState> {
     }
 
 }
-
-
-
-

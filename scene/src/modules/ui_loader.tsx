@@ -3,6 +3,8 @@ import ReactEcs, {ReactEcsRenderer} from '@dcl/sdk/react-ecs'
 import {inputUI} from './input_ui'
 import {render} from 'dcl-ui-toolkit'
 import {setModalScale, targetHeight, targetWidth} from './UIGlobals'
+import { npcUI } from './npc_ui'
+import { NpcUtilsInputUi } from 'dcl-npc-toolkit-ai-version'
 
 let devicePixelRatioScale: number = 1
 
@@ -16,6 +18,8 @@ export function updateUIScalingWithCanvasInfo(canvasInfo: PBUiCanvasInformation)
 
 const uiComponent = () => [
     inputUI(),
+    npcUI(),
+    NpcUtilsInputUi(),
     render()
 ]
 

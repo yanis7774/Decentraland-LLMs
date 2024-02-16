@@ -5,15 +5,16 @@ import {getUserData} from '~system/UserIdentity'
 import {connectionColyseus} from './modules/connection'
 import "./modules/compatibility/polyfill/declares";
 import {setupUi} from './modules/ui_loader';
-import {myNPC, NPCTalk} from "./GameObjects/NPC";
-import * as npc from "dcl-npc-toolkit";
+import {myNPC} from "./GameObjects/NPC";
+import * as npc from "dcl-npc-toolkit-ai-version";
+import { enablePlayerSound } from './utils/utils';
 
 
 export function main() {
     // Defining behavior. See `src/systems.ts` file.
     executeTask(async () => {
         const data = await getUserData({});
-        await connectionColyseus(data.data);
+        //await connectionColyseus(data.data);
 
         setupUi();
 
@@ -25,9 +26,9 @@ export function main() {
 
         // npc.showDebug(true)
 
-        let dialogWindow = npc.createDialogWindow()
+        //let dialogWindow = npc.createDialogWindow()
 
-        npc.openDialogWindow(dialogWindow, NPCTalk, 0)
+        //npc.openDialogWindow(dialogWindow, NPCTalk, 0)
 
 
         // npc.followPath(myNPC, {

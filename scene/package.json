@@ -31,6 +31,7 @@
     "colyseus.js": "0.15.14",
     "core-js": "^3.34.0",
     "dcl-npc-toolkit": "^1.2.2",
+    "dcl-npc-toolkit-ai-version": "^1.2.3",
     "dcl-ui-toolkit": "0.9.1",
     "text-encoding": "^0.7.0"
   },

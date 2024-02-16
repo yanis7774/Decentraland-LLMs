@@ -93,7 +93,7 @@ export function exposeVoiceUrl(voicePath: string) {
         console.log(`Route for voice file ${urlPath} is ready`);
     });
 
-    return `http://localhost:3029${urlPath}`;
+    return `${urlPath}`;
 }
 
 export async function generateImageWithDALLE(prompt: string) {
