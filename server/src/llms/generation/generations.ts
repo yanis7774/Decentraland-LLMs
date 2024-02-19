@@ -8,18 +8,21 @@ require('dotenv').config();
 
 const openai = new OpenAI({ apiKey: process.env.OPEN_API_KEY });
 
-export async function getTextAndVoice(systemMessage: string, prompt: string, voiceModel = 'alloy') {
+export async function getLLMTextAndVoice(systemMessage: string, prompt: string, voiceEnabled: boolean = false, voiceModel = 'alloy') {
     try {
         // Get the response from OpenAI
-        const openAIResponse = await getOpenAIAnswer(systemMessage, prompt);
+        const response = await getOpenAIAnswer(systemMessage, prompt);
 
-        // Generate and save the voice-over
-        const voiceFilePath = await generateAndSaveVoiceOver(openAIResponse, voiceModel);
+        let exposedUrl = "";
+        if (voiceEnabled) {
+            // Generate and save the voice-over
+            const voiceFilePath = await generateAndSaveVoiceOver(response, voiceModel);
 
-        // Expose the URL for the voice file
-        const exposedUrl = exposeVoiceUrl(voiceFilePath);
+            // Expose the URL for the voice file
+            exposedUrl = exposeVoiceUrl(voiceFilePath);
+        }
 
-        return { openAIResponse, exposedUrl };
+        return { response, exposedUrl };
     } catch (error) {
         console.error(`Error in getTextAndVoice: ${error}`);
         throw error;

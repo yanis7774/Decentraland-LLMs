@@ -1,12 +1,13 @@
 import {Client, Room} from "colyseus";
 import {MainRoomState} from "./schema/MainRoomState";
-import {getAnswer} from "../llms/generation/rag";
 import {
     exposeImageUrl,
     generateImageWithDALLE,
-    getTextAndVoice,
+    getLLMTextAndVoice,
     saveImageToFile,
 } from "../llms/generation/generations";
+import { voiceGenerationEnabled } from "../globals";
+import { getRagAnswer } from "../llms/generation/rag";
 
 
 export class MainRoom extends Room<MainRoomState> {
@@ -26,63 +27,34 @@ export class MainRoom extends Room<MainRoomState> {
         })
 
         this.onMessage("getAnswer", async (client, msg) => {
-                console.log("msg", msg);
-                const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
+                //console.log("msg", msg);
+                //const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
 
-
+                let result;
                 // @ts-ignore
-                const {openAIResponse, exposedUrl} = await getTextAndVoice(systemMessage, msg.text);
+                if (msg.rag) {
+                    result = await getRagAnswer(msg.text,voiceGenerationEnabled);
+                } else {
+                    const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
+                    result = await getLLMTextAndVoice(systemMessage,msg.text,voiceGenerationEnabled);
+                }
 
-                // const answer = await getOpenAIAnswer(systemMessage, msg.text);
-                // console.log('OpenAI Answer:', answer.message.content);
-                //
-                // const voiceResponse = await generateAndSaveVoiceOver(answer.message.content);
-
-
-                console.log("ANSWER: ", openAIResponse);
-                console.log("VOICE URL: ", exposedUrl);
+                console.log("ANSWER: ", result.response);
+                console.log("VOICE URL: ", result.exposedUrl);
                 client.send("getAnswer", {
-                    answer: openAIResponse,
+                    answer: result.response,
                     npcFlag: "receptionist",
-                    voiceUrl: exposedUrl,
+                    voiceUrl: result.exposedUrl,
+                    voiceEnabled: voiceGenerationEnabled,
                     id: msg.id
                 });
-
-                //client.send("getAnswer", {answer: answer, npcFlag: "receptionist"})
-
             }
         )
     }
 
     async setUp(room: Room) {
         try {
-
-            const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
-            const prompt = 'I love you';
-            try {
-                // const answer = await getTextAndVoice(systemMessage, prompt);
-                // // const answer = await getOpenAIAnswer(systemMessage, prompt);
-                // console.log('OpenAI Answer:', answer);
-
-
-                // const voiceResponse = await generateAndSaveVoiceOver(answer.message.content);
-
-            } catch (err) {
-                console.error(err);
-            }
-
             console.log("Setting up lobby room...");
-
-            // setTimeout(function () {
-            //     // preLoad()
-            //
-            //     console.log("Timeout is up! This code runs after a delay.");
-            // }, 2000); // 2000 milliseconds (2 seconds) delay
-
-            // const answer = await getAnswer("What are the approaches to Task Decomposition? Timeout is up! This code runs after a delay.");
-            // console.log("answer", answer.text);
-            // console.log("answer", answer);
-
         } catch (error) {
             console.error("Error in createImage handler:", error);
         }

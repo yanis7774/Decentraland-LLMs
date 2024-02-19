@@ -1,5 +1,5 @@
 import ReactEcs, {UiEntity} from "@dcl/sdk/react-ecs"
-import {targetHeight, targetWidth} from "./UIGlobals"
+import {modalScale, targetHeight, targetWidth} from "./UIGlobals"
 import { NpcUtilsUi } from "dcl-npc-toolkit-ai-version"
 
 export const npcUI = () => {
@@ -7,8 +7,8 @@ export const npcUI = () => {
         <UiEntity
             uiTransform={{
                 positionType: 'absolute',
-                width: targetWidth,
-                height: targetHeight,
+                width: targetWidth*modalScale,
+                height: targetHeight*modalScale,
                 position: {top: '0%', left: '0%'},
                 display: 'flex'
             }}

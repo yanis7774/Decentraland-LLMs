@@ -1,4 +1,7 @@
 import {OpenAI} from "@langchain/openai";
+import { exposeVoiceUrl, generateAndSaveVoiceOver } from "./generations";
+import { modelTypes } from "../../globals";
+import { TextLoader } from "langchain/document_loaders/fs/text";
 
 const {RetrievalQAChain, loadQAStuffChain} = require("langchain/chains");
 const {CheerioWebBaseLoader} = require("langchain/document_loaders/web/cheerio");
@@ -12,8 +15,7 @@ const {PromptTemplate} = require("@langchain/core/prompts");
 
 let chain: any;
 
-
-export async function preLoad() {
+export async function preLoad(modelType: modelTypes, baseUrl: string = "http://localhost:11434", modelName: string = "", temperature: number = 0) {
 
     // Loader for web pages
     // const loader = new CheerioWebBaseLoader(
@@ -24,9 +26,12 @@ export async function preLoad() {
 
 
     // Loader for PDFs
-    const loader = new PDFLoader(
-        "./src/llms/Golfcraft_LLM_information.pdf"
-    )
+    // const loader = new PDFLoader(
+    //     "./src/llms/Golfcraft_LLM_information.pdf"
+    // )
+
+    // Loader for TXTs
+    const loader = new TextLoader("./src/llms/data/mrt.txt");
 
     const docs = await loader.load();
     const splitter = new RecursiveCharacterTextSplitter({
@@ -41,23 +46,26 @@ export async function preLoad() {
     );
     const retriever = vectorstore.asRetriever();
 
-    // For local LLMs
-    // const model = new Ollama({
-    //     baseUrl: "http://localhost:11434",
-    //     model: "mistral",
-    //     temperature: 0.3,
-    // });
+    let model;
 
-
-    // For OpenAI
-    const model = new OpenAI({
-        openAIApiKey: process.env.OPEN_API_KEY,
-        modelName: "gpt-3.5-turbo-0613"
-        // temperature: 0.9,
-        // configuration: {
-        //     baseURL: "http://localhost:11434",
-        // },
-    });
+    if (modelType == modelTypes.ollama) {
+        // For local LLMs
+        model = new Ollama({
+            baseUrl: baseUrl,
+            model: modelName == "" ? "mistral" : modelName,
+            temperature: temperature == 0 ? 0.3 : temperature,
+        });
+    } else {
+        // For OpenAI
+        model = new OpenAI({
+            openAIApiKey: process.env.OPEN_API_KEY,
+            modelName: modelName == "" ? "gpt-3.5-turbo-0613" : modelName,
+            temperature: temperature == 0 ? 0.9 : temperature,
+            configuration: {
+                baseURL: baseUrl,
+            },
+        });
+    }
 
     const template = `Use the following pieces of context to answer the question at the end.
         If you don't know the answer, just say that you don't know, don't try to make up an answer.
@@ -79,21 +87,28 @@ export async function preLoad() {
         inputKey: "question",
     });
 
-
-    // console.log("chain", chain)
-
     // return chain;
-
 }
 
 
-export async function getAnswer(question: string) {
-    const response = await chain.call({
-        question,
-    });
-    return response;
-}
+export async function getRagAnswer(question: string, voiceEnabled: boolean = false, voiceModel: string = 'alloy') {
+    if (chain) {
+        const response = await chain.call({
+            question,
+        });
+        console.log("response: ", response);
+        let exposedUrl = "";
 
-// const response_llm = await chain.call({
-//     question: "What are the approaches to Task Decomposition?",
-// });
+        if (voiceEnabled) {
+            // Generate and save the voice-over
+            const voiceFilePath = await generateAndSaveVoiceOver(response, voiceModel);
+
+            // Expose the URL for the voice file
+            exposedUrl = exposeVoiceUrl(voiceFilePath);
+        }
+
+        return {response,exposedUrl};
+    } else {
+        return undefined;
+    }
+}
