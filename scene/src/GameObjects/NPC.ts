@@ -5,8 +5,6 @@ import {NPCBodyType} from "dcl-npc-toolkit-ai-version/dist/types";
 import { invokeInput } from '../modules/input_ui';
 import { InputAction, MeshCollider, PointerEventType, PointerEvents, Transform, engine, inputSystem } from '@dcl/sdk/ecs';
 
-npc.setCustomServerUrl("http://localhost:2574");
-
 export let myNPC = npc.create(
     {
         position: Vector3.create(8, 0, 8),
@@ -30,7 +28,7 @@ export let myNPC = npc.create(
         onWalkAway: async (data) => {
             //console.log('npc walkAway', data)
         }
-    }
+    },false,"http://localhost:2574"
 )
 
 
