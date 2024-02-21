@@ -3,11 +3,11 @@ import {MainRoomState} from "./schema/MainRoomState";
 import {
     exposeImageUrl,
     generateImageWithDALLE,
-    getLLMTextAndVoice,
     saveImageToFile,
 } from "../llms/generation/generations";
 import { voiceGenerationEnabled } from "../globals";
-import { getRagAnswer } from "../llms/generation/rag";
+import { getLLMTextAndVoice, getRagAnswer } from "llm_response_backend";
+import { appReadyPromise } from "../app.config";
 
 
 export class MainRoom extends Room<MainRoomState> {
@@ -27,20 +27,29 @@ export class MainRoom extends Room<MainRoomState> {
         })
 
         this.onMessage("getAnswer", async (client, msg) => {
-                //console.log("msg", msg);
-                //const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
-
                 let result;
                 // @ts-ignore
                 if (msg.rag) {
-                    result = await getRagAnswer(msg.text,voiceGenerationEnabled);
+                    if (voiceGenerationEnabled) {
+                        await appReadyPromise.then(async (app)=>{
+                            result = await getRagAnswer(msg.text,true,app);
+                        })
+                    } else {
+                        result = await getRagAnswer(msg.text,false);
+                    }
                 } else {
                     const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
-                    result = await getLLMTextAndVoice(systemMessage,msg.text,voiceGenerationEnabled);
+                    if (voiceGenerationEnabled) {
+                        await appReadyPromise.then(async (app)=>{
+                            result = await getLLMTextAndVoice(systemMessage,msg.text,true,app);
+                        })
+                    } else {
+                        result = await getLLMTextAndVoice(systemMessage,msg.text,false);
+                    }
                 }
 
-                console.log("ANSWER: ", result.response);
-                console.log("VOICE URL: ", result.exposedUrl);
+                // console.log("ANSWER: ", result.response);
+                // console.log("VOICE URL: ", result.exposedUrl);
                 client.send("getAnswer", {
                     answer: result.response,
                     npcFlag: "receptionist",

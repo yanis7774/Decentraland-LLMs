@@ -28,7 +28,7 @@ export let myNPC = npc.create(
         onWalkAway: async (data) => {
             //console.log('npc walkAway', data)
         }
-    },false,"http://localhost:2574"
+    },true,"http://localhost:2574"
 )
 
 
