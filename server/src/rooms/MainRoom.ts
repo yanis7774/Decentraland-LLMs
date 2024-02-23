@@ -6,7 +6,7 @@ import {
     saveImageToFile,
 } from "../llms/generation/generations";
 import { voiceGenerationEnabled } from "../globals";
-import { getLLMTextAndVoice, getRagAnswer } from "llm_response_backend";
+import { getLLMTextAndVoice, getRagAnswer, modelTypes, preLoad } from "llm_response_backend";
 import { appReadyPromise } from "../app.config";
 
 
@@ -29,31 +29,27 @@ export class MainRoom extends Room<MainRoomState> {
         this.onMessage("getAnswer", async (client, msg) => {
                 let result;
                 // @ts-ignore
+                
+                let text = "";
+                let voiceUrl = "";
+                // @ts-ignore
                 if (msg.rag) {
-                    if (voiceGenerationEnabled) {
-                        await appReadyPromise.then(async (app)=>{
-                            result = await getRagAnswer(msg.text,true,app);
-                        })
-                    } else {
-                        result = await getRagAnswer(msg.text,false);
-                    }
+                    const result = await getRagAnswer(msg.text,voiceGenerationEnabled);
+                    text = result.response.text;
+                    voiceUrl = result.exposedUrl;
                 } else {
                     const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
-                    if (voiceGenerationEnabled) {
-                        await appReadyPromise.then(async (app)=>{
-                            result = await getLLMTextAndVoice(systemMessage,msg.text,true,app);
-                        })
-                    } else {
-                        result = await getLLMTextAndVoice(systemMessage,msg.text,false);
-                    }
+                    const result = await getLLMTextAndVoice(systemMessage,msg.text,voiceGenerationEnabled);
+                    text = result.response;
+                    voiceUrl = result.exposedUrl;
                 }
 
                 // console.log("ANSWER: ", result.response);
                 // console.log("VOICE URL: ", result.exposedUrl);
                 client.send("getAnswer", {
-                    answer: result.response,
+                    answer: text,
                     npcFlag: "receptionist",
-                    voiceUrl: result.exposedUrl,
+                    voiceUrl: voiceUrl,
                     voiceEnabled: voiceGenerationEnabled,
                     id: msg.id
                 });
