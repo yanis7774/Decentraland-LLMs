@@ -5,8 +5,8 @@ import {
     generateImageWithDALLE,
     saveImageToFile,
 } from "../llms/generation/generations";
-import { voiceGenerationEnabled } from "../globals";
-import { getLLMTextAndVoice, getRagAnswer, modelTypes, preLoad } from "llm_response_backend";
+import { mainChain, voiceGenerationEnabled } from "../globals";
+import { getLLMTextAndVoice, modelTypes } from "llm_response_backend";
 import { appReadyPromise } from "../app.config";
 
 
@@ -34,12 +34,12 @@ export class MainRoom extends Room<MainRoomState> {
                 let voiceUrl = "";
                 // @ts-ignore
                 if (msg.rag) {
-                    const result = await getRagAnswer(msg.text,voiceGenerationEnabled);
+                    const result = await mainChain.getRagAnswer(msg.text,voiceGenerationEnabled,await appReadyPromise);
                     text = result.response.text;
                     voiceUrl = result.exposedUrl;
                 } else {
                     const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
-                    const result = await getLLMTextAndVoice(systemMessage,msg.text,voiceGenerationEnabled);
+                    const result = await getLLMTextAndVoice(systemMessage,msg.text,voiceGenerationEnabled,await appReadyPromise);
                     text = result.response;
                     voiceUrl = result.exposedUrl;
                 }
