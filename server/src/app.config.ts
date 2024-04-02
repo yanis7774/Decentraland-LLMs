@@ -74,6 +74,7 @@ export default config({
             res.send("It's time to kick ass and chew bubblegum!");
         });
         app.use('/voices', express.static(path.join(__dirname,'../voices')));
+        app.use('/images', express.static(path.join(__dirname,'../images')));
 
 
         },

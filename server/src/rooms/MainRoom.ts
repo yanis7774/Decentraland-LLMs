@@ -1,12 +1,7 @@
 import {Client, Room} from "colyseus";
 import {MainRoomState} from "./schema/MainRoomState";
-import {
-    exposeImageUrl,
-    generateImageWithDALLE,
-    saveImageToFile,
-} from "../llms/generation/generations";
 import { mainChain, voiceGenerationEnabled } from "../globals";
-import { getLLMTextAndVoice, modelTypes } from "llm_response_backend";
+import { getLLMTextAndVoice, modelTypes, generateAndSaveImage } from "llm_response";
 import { appReadyPromise } from "../app.config";
 
 
@@ -18,12 +13,17 @@ export class MainRoom extends Room<MainRoomState> {
         this.maxClients = 100;
 
         this.onMessage("getImage", async (client, msg) => {
-            const imageResponse = await generateImageWithDALLE(msg.prompt);
-            const imagePath = await saveImageToFile(imageResponse);
-            const imageUrl = exposeImageUrl(imagePath);
-            console.log("imageUrl", imageUrl)
+            const imageResponse = await generateAndSaveImage(msg.prompt, await appReadyPromise);
+            console.log("imageUrl", `${process.env.SERVER_URL ? process.env.SERVER_URL : ""}${imageResponse}`) // 
 
-            client.send("setImage", {img: imageUrl})
+            setTimeout(()=>{
+                client.send("setImage", `${process.env.SERVER_URL ? process.env.SERVER_URL : ""}${imageResponse}`)
+            },1000)
+        })
+
+        this.onMessage("getMusic", async (client, msg) => {
+            // GET MUSIC
+            client.send("setMusic", {sound: undefined}); // replace withresult
         })
 
         this.onMessage("getAnswer", async (client, msg) => {
@@ -39,20 +39,21 @@ export class MainRoom extends Room<MainRoomState> {
                     voiceUrl = result.exposedUrl;
                 } else {
                     const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
-                    const result = await getLLMTextAndVoice(systemMessage,msg.text,voiceGenerationEnabled,await appReadyPromise);
+                    const result = await getLLMTextAndVoice(systemMessage,msg.text,await appReadyPromise);
                     text = result.response;
                     voiceUrl = result.exposedUrl;
+                    console.log("VOICE URL: ", voiceUrl);
                 }
 
-                // console.log("ANSWER: ", result.response);
-                // console.log("VOICE URL: ", result.exposedUrl);
-                client.send("getAnswer", {
-                    answer: text,
-                    npcFlag: "receptionist",
-                    voiceUrl: voiceUrl,
-                    voiceEnabled: voiceGenerationEnabled,
-                    id: msg.id
-                });
+                setTimeout(()=>{
+                    client.send("getAnswer", {
+                        answer: text,
+                        npcFlag: "receptionist",
+                        voiceUrl: voiceUrl,
+                        voiceEnabled: voiceGenerationEnabled,
+                        id: msg.id
+                    });
+                },3000)
             }
         )
     }

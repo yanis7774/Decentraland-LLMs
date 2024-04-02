@@ -8,13 +8,15 @@ import {setupUi} from './modules/ui_loader';
 import {myNPC} from "./GameObjects/NPC";
 import * as npc from "dcl-npc-toolkit-ai-version";
 import { enablePlayerSound } from './utils/utils';
+import { CustomPainting } from './modules/banner';
+import { MusicBoombox } from './modules/boombox';
 
 
 export function main() {
     // Defining behavior. See `src/systems.ts` file.
     executeTask(async () => {
         const data = await getUserData({});
-        //await connectionColyseus(data.data);
+        await connectionColyseus(data.data);
 
         setupUi();
 
@@ -24,7 +26,7 @@ export function main() {
 
         console.log("npc_data", npc_data)
 
-        // npc.showDebug(true)
+        //npc.showDebug(true)
 
         //let dialogWindow = npc.createDialogWindow()
 
@@ -66,7 +68,9 @@ export function main() {
         // npc.getData(npcEntity).faceUser = false
 
 
-        //new CustomPainting();
+        new CustomPainting();
+        new MusicBoombox();
+
         // setReceptionist(new ReceptionNpc(
         //     {
         //         position: {x: 5, y: -0.1, z: 5},

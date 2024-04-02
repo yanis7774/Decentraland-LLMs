@@ -2,7 +2,7 @@ import { listen } from "@colyseus/tools";
 
 // Import app config
 import appConfig from "./app.config";
-import { createRagChain, modelTypes, setupOpenAIKey } from "llm_response_backend";
+import { createRagChain, modelTypes, setupOpenAIKey } from "llm_response";
 import { setMainChain } from "./globals";
 
 // Create and listen on 2567 (or PORT environment variable.)

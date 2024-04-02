@@ -4,9 +4,10 @@ import {getUserData} from "~system/UserIdentity"
 import {receptionist, setRoom} from "./global"
 import {banner} from "./banner"
 import {addLocalLLMResponse} from "./aiResponse"
-import {AudioStream, engine} from "@dcl/sdk/ecs";
-import { openDialogWindow } from "dcl-npc-toolkit-ai-version"
+import {AudioStream, AvatarAttach, engine} from "@dcl/sdk/ecs";
+import { openDialogWindow, setCustomServerUrl } from "dcl-npc-toolkit-ai-version"
 import { myNPC } from "../GameObjects/NPC"
+import * as utils from '@dcl-sdk/utils';
 
 export class NetworkManager {
     client!: Client
@@ -86,24 +87,22 @@ export class NetworkManager {
     async addLobbyListeners() {
         this.room.onMessage("setImage", async (msg) => {
             console.log("SET IMAGE: ", msg);
-            banner.loadAdditionalData(msg.img);
-
+            banner.loadAdditionalData(msg);
         })
 
-        this.room.onMessage("getAnswer", async (msg) => {
-
-            if (msg.npcFlag == "receptionist") {
-
-                const voiceUrl = msg.voiceUrl;
-
-                const streamEntity = engine.addEntity()
-
-                AudioStream.create(streamEntity, {
-                    url: voiceUrl,
-                    playing: true,
-                    volume: 0.8,
-                })
-            }
+        this.room.onMessage("setMusic", async (msg) => {
+            let playerSoundEntity = engine.addEntity();
+            AudioStream.createOrReplace(playerSoundEntity, {
+                url: msg.sound,
+                playing: false,
+            });
+            AvatarAttach.createOrReplace(playerSoundEntity, {
+                anchorPointId: 0,
+            });
+            AudioStream.getMutable(playerSoundEntity).playing = true;
+            utils.timers.setTimeout(() => {
+                engine.removeEntity(playerSoundEntity);
+            }, 100 * 1000);
         })
     }
 }
@@ -117,8 +116,9 @@ export async function getEndpoint() {
     console.log("PREVIEW MODE", isPreview.isPreview);
 
     ENDPOINT = (isPreview.isPreview)
-        ? "http://localhost:3029" // local environment
+        ? "http://localhost:2574" // local environment
         : "https://sdk7.mrt.games/serverAI"; // production environment insert if needed
+    setCustomServerUrl("http://localhost:2574");
 
     console.log("GOT ENDPOINT", ENDPOINT);
 

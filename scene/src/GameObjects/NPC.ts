@@ -1,8 +1,6 @@
 import * as npc from 'dcl-npc-toolkit-ai-version'
-import {Dialog} from 'dcl-npc-toolkit-ai-version'
 import {Quaternion, Vector3} from "@dcl/sdk/math";
 import {NPCBodyType} from "dcl-npc-toolkit-ai-version/dist/types";
-import { invokeInput } from '../modules/input_ui';
 import { InputAction, MeshCollider, PointerEventType, PointerEvents, Transform, engine, inputSystem } from '@dcl/sdk/ecs';
 
 export let myNPC = npc.create(
@@ -28,7 +26,7 @@ export let myNPC = npc.create(
         onWalkAway: async (data) => {
             //console.log('npc walkAway', data)
         }
-    },true,"http://localhost:2574"
+    },false,"http://localhost:2574"
 )
 
 

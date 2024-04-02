@@ -7,6 +7,8 @@ import {
     MeshRenderer,
     PointerEventType,
     PointerEvents,
+    TextureFilterMode,
+    TextureWrapMode,
     Transform,
     engine,
     inputSystem
@@ -14,6 +16,7 @@ import {
 import {Quaternion, Vector3} from "@dcl/sdk/math";
 import {globalRoom} from "./global";
 import {invokeInput} from "./input_ui";
+import * as utils from '@dcl-sdk/utils';
 
 export let banner: CustomPainting;
 
@@ -31,9 +34,9 @@ export class CustomPainting {
         this.picture = engine.addEntity();
         MeshRenderer.setPlane(this.picture);
         const params = {
-            pos: Vector3.create(0, 0, 0.7),
+            pos: Vector3.create(0, 0, 2), // 0, 0.7
             rot: Quaternion.create(0.0, 0.0, 0.0),
-            scale: Vector3.create(-1, 1, 1)
+            scale: Vector3.create(1, 1, 1)
         };
         Transform.create(this.picture, {
             parent: this.mainEntity,
@@ -45,15 +48,22 @@ export class CustomPainting {
     }
 
     loadAdditionalData(input: string) {
-        Material.setPbrMaterial(this.picture, {texture: Material.Texture.Common({src: input})});
+        Material.setPbrMaterial(this.picture, {
+            texture: Material.Texture.Common({
+                src: input,
+                filterMode: TextureFilterMode.TFM_BILINEAR,
+                wrapMode: TextureWrapMode.TWM_CLAMP,
+            }),
+        });
     }
 
     sendNewPrompt(input: string) {
-        if (globalRoom != undefined)
+        if (globalRoom != undefined) {
             console.log("SENDING PROMPT", input)
-        globalRoom.send("getImage", {
-            prompt: input
-        })
+            globalRoom.send("getImage", {
+                prompt: input
+            })
+        }
     }
 
 
