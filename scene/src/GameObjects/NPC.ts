@@ -1,7 +1,6 @@
 import * as npc from 'dcl-npc-toolkit-ai-version'
 import {Quaternion, Vector3} from "@dcl/sdk/math";
 import {NPCBodyType} from "dcl-npc-toolkit-ai-version/dist/types";
-import { InputAction, MeshCollider, PointerEventType, PointerEvents, Transform, engine, inputSystem } from '@dcl/sdk/ecs';
 
 export let myNPC = npc.create(
     {
@@ -28,35 +27,3 @@ export let myNPC = npc.create(
         }
     },false,"http://localhost:2574"
 )
-
-
-let pointerCollider = engine.addEntity()
-
-MeshCollider.setBox(pointerCollider)
-Transform.create(
-    pointerCollider, 
-    { 
-        position: {x: 0, y: 1, z: 0.5},
-        scale: {x: 1.4, y: 1.5, z: 1.8},
-        parent: myNPC
-    }
-)
-
-PointerEvents.create(
-    pointerCollider,
-    {pointerEvents: [
-    {
-        eventType: PointerEventType.PET_DOWN,
-        eventInfo: {
-            button: InputAction.IA_POINTER,
-            hoverText: `Talk`,
-            maxDistance: 15
-        }
-    },
-]})
-
-engine.addSystem(()=>{
-    if (inputSystem.isTriggered(InputAction.IA_POINTER, PointerEventType.PET_DOWN, pointerCollider)) {
-        npc.activate(myNPC,engine.PlayerEntity);
-    }
-});
