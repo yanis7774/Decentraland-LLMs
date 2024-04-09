@@ -2,18 +2,26 @@ import ReactEcs, {UiEntity} from "@dcl/sdk/react-ecs"
 import {modalScale, targetHeight, targetWidth} from "./UIGlobals"
 import { NpcUtilsUi } from "dcl-npc-toolkit-ai-version"
 
+const modalWidth = 800;
+const modalHeight = 500;
 export const npcUI = () => {
     return (
         <UiEntity
             uiTransform={{
                 positionType: 'absolute',
-                width: targetWidth*modalScale,
-                height: targetHeight*modalScale,
-                position: {top: '0%', left: '0%'},
+                
+                width: getScaledSize(modalWidth),
+                height: getScaledSize(modalHeight),
+                position: {bottom: getScaledSize(40), left: '50%'},
+                margin: {left: -getScaledSize(modalWidth) / 2},
                 display: 'flex'
             }}
         >
             <NpcUtilsUi/>
         </UiEntity>
     )
+}
+
+function getScaledSize(value: number) {
+    return value*modalScale;
 }
