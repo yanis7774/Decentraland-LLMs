@@ -9,7 +9,7 @@ export class MusicBoombox {
 
     constructor() {
         this.mainEntity = engine.addEntity();
-        Transform.create(this.mainEntity, {position: Vector3.create(2, 1, 2), scale: Vector3.create(1, 1, 1)});
+        Transform.create(this.mainEntity, {position: Vector3.create(8, 0.4, 13), scale: Vector3.create(1, 1, 1)});
         this.invokePointer();
         GltfContainer.create(this.mainEntity, {src: 'images/boombox.glb'});
     }
@@ -26,7 +26,6 @@ export class MusicBoombox {
             })
         }
     }
-
 
     invokePointer() {
         PointerEvents.create(this.mainEntity, {

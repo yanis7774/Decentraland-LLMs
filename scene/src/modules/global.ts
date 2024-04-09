@@ -9,3 +9,6 @@ export let receptionist: any;
 export function setReceptionist(newreceptionist: any) {
     receptionist = newreceptionist;
 }
+
+export const productionUrl = "";
+export const previewUrl = "http://localhost:2574";

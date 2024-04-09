@@ -1,7 +1,7 @@
 import {Client, Room} from "colyseus";
 import {MainRoomState} from "./schema/MainRoomState";
 import { mainChain, voiceGenerationEnabled } from "../globals";
-import { getLLMTextAndVoice, modelTypes, generateAndSaveImage } from "llm_response";
+import { getLLMTextAndVoice, modelTypes, generateAndSaveImage, generateMusic } from "llm_response";
 import { appReadyPromise } from "../app.config";
 
 
@@ -22,8 +22,8 @@ export class MainRoom extends Room<MainRoomState> {
         })
 
         this.onMessage("getMusic", async (client, msg) => {
-            // GET MUSIC
-            client.send("setMusic", {sound: undefined}); // replace withresult
+            const result = await generateMusic(msg.prompt);
+            client.send("setMusic", {music: result});
         })
 
         this.onMessage("getAnswer", async (client, msg) => {

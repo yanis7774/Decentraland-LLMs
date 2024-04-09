@@ -1,12 +1,10 @@
 import {Client, Room} from "colyseus.js"
 import {getCurrentRealm, isPreviewMode} from "~system/EnvironmentApi"
 import {getUserData} from "~system/UserIdentity"
-import {receptionist, setRoom} from "./global"
+import {previewUrl, productionUrl, receptionist, setRoom} from "./global"
 import {banner} from "./banner"
-import {addLocalLLMResponse} from "./aiResponse"
 import {AudioStream, AvatarAttach, engine} from "@dcl/sdk/ecs";
 import { openDialogWindow, setCustomServerUrl } from "dcl-npc-toolkit-ai-version"
-import { myNPC } from "../GameObjects/NPC"
 import * as utils from '@dcl-sdk/utils';
 
 export class NetworkManager {
@@ -93,7 +91,7 @@ export class NetworkManager {
         this.room.onMessage("setMusic", async (msg) => {
             let playerSoundEntity = engine.addEntity();
             AudioStream.createOrReplace(playerSoundEntity, {
-                url: msg.sound,
+                url: msg.music,
                 playing: false,
             });
             AvatarAttach.createOrReplace(playerSoundEntity, {
@@ -116,9 +114,9 @@ export async function getEndpoint() {
     console.log("PREVIEW MODE", isPreview.isPreview);
 
     ENDPOINT = (isPreview.isPreview)
-        ? "http://localhost:2574" // local environment
-        : "https://sdk7.mrt.games/serverAI"; // production environment insert if needed
-    setCustomServerUrl("http://localhost:2574");
+        ? previewUrl // local environment
+        : productionUrl; // production environment insert if needed
+    setCustomServerUrl(previewUrl);
 
     console.log("GOT ENDPOINT", ENDPOINT);
 
