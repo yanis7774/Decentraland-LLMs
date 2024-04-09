@@ -74,7 +74,6 @@ export class MainRoom extends Room<MainRoomState> {
     async onLeave(client: Client, consented: boolean) {
         console.log("Leaving lobby room successfully...");
 
-
     }
 
     async onDispose() {

@@ -38,7 +38,7 @@
     "@inworld/nodejs-sdk": "^1.10.2",
     "@langchain/community": "^0.0.16",
     "@langchain/openai": "^0.0.11",
-    "@xenova/transformers": "^2.14.0",
+    "@xenova/transformers": "^2.16.1",
     "axios": "1.6.2",
     "cheerio": "^1.0.0-rc.12",
     "colyseus": "0.15.13",
@@ -51,8 +51,10 @@
     "openai": "^4.26.0",
     "path": "^0.12.7",
     "pdf-parse": "^1.1.1",
+    "replicate": "^0.18.1",
     "ts-node": "8.10.2",
     "ts-node-dev": "1.1.8",
-    "url-polyfill": "1.1.12"
+    "url-polyfill": "1.1.12",
+    "wavefile": "^11.0.0"
   }
 }

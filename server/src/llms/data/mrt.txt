@@ -1,6 +1,6 @@
-MRT Description  Meta Residence Tower (hereinafter MRT) is a project in the Decentraland metaverse, representing a virtual skyscraper with 10,000 NFT apartments. Access to the apartment is provided with an NFT key (on polygon chain), which the user can purchase on the website and in the building itself.
- The building has 4 types of layouts:  - Studio - from 69$ - 1BHK - from $119 - 2BHK - from $169 - Penthouse - from $350
- 1. The apartment has an interior design constructor with more than 700 furniture items (from bedroom to bathroom), ceilings, floors, and wallpapers. The user can create unique furniture arrangements. There are also interactive smart items that expand user interaction:
+MRT Description Meta Residence Tower (hereinafter MRT) is a project in the Decentraland metaverse, representing a virtual skyscraper with 10,000 NFT apartments. Access to the apartment is provided with an NFT key (on polygon chain), which the user can purchase on the website and in the building itself.
+The building has 4 types of layouts: - Studio - from 69$ - 1BHK - from $119 - 2BHK - from $169 - Penthouse - from $350
+1. The apartment has an interior design constructor with more than 700 furniture items (from bedroom to bathroom), ceilings, floors, and wallpapers. The user can create unique furniture arrangements. There are also interactive smart items that expand user interaction:
 
 2. Smart-items. There are a lot of interactable smart items:
 - Boombox: A music player that can be turned on by the apartment owner. Music plays only for those inside the apartment.
