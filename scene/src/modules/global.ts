@@ -11,4 +11,6 @@ export function setReceptionist(newreceptionist: any) {
 }
 
 export const productionUrl = "";
+export const productionFileUrl = "";
+export const previewFileUrl = "";
 export const previewUrl = "http://localhost:2574";
