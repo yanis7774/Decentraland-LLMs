@@ -53,7 +53,7 @@ export class MainRoom extends Room<MainRoomState> {
                         voiceEnabled: voiceGenerationEnabled,
                         id: msg.id
                     });
-                },3000)
+                },5000)
             }
         )
     }
