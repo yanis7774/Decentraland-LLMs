@@ -18,7 +18,7 @@ export function main() {
 
         setupUi();
 
-        setReceptionist(createNpc());
+        setReceptionist(await createNpc());
         new CustomPainting();
         new MusicBoombox();
 

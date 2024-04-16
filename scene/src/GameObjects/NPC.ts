@@ -1,8 +1,18 @@
 import * as npc from 'dcl-npc-toolkit-ai-version'
 import {Quaternion, Vector3} from "@dcl/sdk/math";
 import {NPCBodyType} from "dcl-npc-toolkit-ai-version/dist/types";
+import { isPreviewMode } from '~system/EnvironmentApi';
+import { previewUrl, productionUrl } from '../modules/global';
 
-export function createNpc() {
+export async function createNpc() {
+
+    const isPreview = await isPreviewMode({});
+    let ENDPOINT
+
+    ENDPOINT = (isPreview.isPreview)
+        ? previewUrl // local environment
+        : productionUrl; // production environment insert if needed
+
     const NPC = npc.create(
         {
             position: Vector3.create(8, 0, 8),
@@ -26,7 +36,7 @@ export function createNpc() {
             onWalkAway: async (data) => {
                 //console.log('npc walkAway', data)
             }
-        },false,"http://localhost:2574"
+        },false,ENDPOINT
     )
     return NPC
 }
