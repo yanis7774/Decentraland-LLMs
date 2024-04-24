@@ -5,9 +5,13 @@ export function setRoom(room: any) {
 }
 
 export let receptionist: any;
-
 export function setReceptionist(newreceptionist: any) {
     receptionist = newreceptionist;
+}
+
+export let configuredNpc: any;
+export function setConfiguredNpc(newnpc: any) {
+    receptionist = newnpc;
 }
 
 export const productionUrl = "";

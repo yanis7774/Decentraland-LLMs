@@ -1,10 +1,9 @@
 import * as npc from 'dcl-npc-toolkit-ai-version'
-import {Quaternion, Vector3} from "@dcl/sdk/math";
 import {NPCBodyType} from "dcl-npc-toolkit-ai-version/dist/types";
 import { isPreviewMode } from '~system/EnvironmentApi';
 import { previewFileUrl, previewUrl, productionFileUrl, productionUrl } from '../modules/global';
 
-export async function createNpc() {
+export async function createNpc(model: string, configured: boolean, transform: any) {
 
     const isPreview = await isPreviewMode({});
     let ENDPOINT, FILE_SERVER
@@ -17,16 +16,12 @@ export async function createNpc() {
         : productionFileUrl
 
     const NPC = npc.create(
-        {
-            position: Vector3.create(8, 0, 8),
-            rotation: Quaternion.Zero(),
-            scale: Vector3.create(1, 1, 1),
-        },
+        transform,
         //NPC Data Object
         {
             type: npc.NPCType.CUSTOM,
             body: NPCBodyType.MALE,
-            model: 'images/woman_Idle.glb',
+            model: model,
             idleAnim: 'Idle',
             faceUser: true,
             turningSpeed: 10,
@@ -39,7 +34,7 @@ export async function createNpc() {
             onWalkAway: async (data) => {
                 //console.log('npc walkAway', data)
             }
-        },false,ENDPOINT,"lobby_room",FILE_SERVER
+        },false,configured,ENDPOINT,"lobby_room",FILE_SERVER
     )
     return NPC
 }

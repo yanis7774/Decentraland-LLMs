@@ -1,7 +1,7 @@
 import {Client, Room} from "colyseus";
 import {MainRoomState} from "./schema/MainRoomState";
-import { mainChain, voiceGenerationEnabled } from "../globals";
-import { getLLMTextAndVoice, modelTypes, generateAndSaveImage, generateMusic } from "llm_response";
+import { aiSystemConfig, mainChain, voiceGenerationEnabled } from "../globals";
+import { getLLMTextAndVoice, modelTypes, generateAndSaveImage, generateMusic, getLLMTextAndVoiceConfigured } from "llm_response";
 import { appReadyPromise } from "../app.config";
 
 
@@ -12,6 +12,7 @@ export class MainRoom extends Room<MainRoomState> {
         this.setSeatReservationTime(60);
         this.maxClients = 100;
 
+        // This listener part is used for generating image for banner and sending it back
         this.onMessage("getImage", async (client, msg) => {
             const imageResponse = await generateAndSaveImage(msg.prompt, await appReadyPromise);
             console.log("imageUrl", `${process.env.SERVER_URL ? process.env.SERVER_URL : ""}${imageResponse}`) // 
@@ -21,11 +22,13 @@ export class MainRoom extends Room<MainRoomState> {
             },1000)
         })
 
+        // This listener part is used for generating music and sending it back
         this.onMessage("getMusic", async (client, msg) => {
             const result = await generateMusic(msg.prompt);
             client.send("setMusic", {music: result});
         })
 
+        // This listener part is used to handle all NPC's interactions and generate prompts under different conditions
         this.onMessage("getAnswer", async (client, msg) => {
                 let result;
                 // @ts-ignore
@@ -38,8 +41,13 @@ export class MainRoom extends Room<MainRoomState> {
                     text = result.response.text;
                     voiceUrl = result.exposedUrl;
                 } else {
-                    const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
-                    const result = await getLLMTextAndVoice(systemMessage,msg.text,await appReadyPromise);
+                    let result = undefined;
+                    if (!msg.configured) {
+                        const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
+                        result = await getLLMTextAndVoice(systemMessage,msg.text,await appReadyPromise);
+                    } else {
+                        result = await getLLMTextAndVoiceConfigured(aiSystemConfig,msg.text,await appReadyPromise);
+                    }
                     text = result.response;
                     voiceUrl = result.exposedUrl;
                     console.log("VOICE URL: ", voiceUrl);
@@ -48,7 +56,6 @@ export class MainRoom extends Room<MainRoomState> {
                 setTimeout(()=>{
                     client.send("getAnswer", {
                         answer: text,
-                        npcFlag: "receptionist",
                         voiceUrl: voiceUrl,
                         voiceEnabled: voiceGenerationEnabled,
                         id: msg.id
