@@ -25,7 +25,7 @@ export function main() {
             scale: Vector3.create(1, 1, 1),
         }));
         setConfiguredNpc(await createNpc('models/hotel_boy_collider.glb',true,{
-            position: Vector3.create(2, 0, 2),
+            position: Vector3.create(14, 0, 10),
             rotation: Quaternion.Zero(),
             scale: Vector3.create(1, 1, 1),
         }));
