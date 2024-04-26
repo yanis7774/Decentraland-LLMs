@@ -43,7 +43,7 @@ CreateNpc() has transform and npc configuration object (like in basic dcl-npc-to
 Then it has ragModel, configuredMode, endpoint, room name and file server url
 
 - ragModel uses rag model generation (which is handled on backend, mostly inside the backend library)
-- configureModel specifies backend to use configuration for system message. Won't work with rag model
+- configureModel specifies backend to use configuration Role-play Characters. Won't work with rag model. Configured in globals.ts
 - endpoint is a url for server connection
 - room name is the room name from colyseus server which this project connects to
 - file server url is optional, if specified, voice and image files will be fetched from it and not from server url directly
