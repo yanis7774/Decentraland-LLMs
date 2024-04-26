@@ -3,7 +3,7 @@ import {NPCBodyType} from "dcl-npc-toolkit-ai-version/dist/types";
 import { isPreviewMode } from '~system/EnvironmentApi';
 import { previewFileUrl, previewUrl, productionFileUrl, productionUrl } from '../modules/global';
 
-export async function createNpc(model: string, configured: boolean, transform: any) {
+export async function createNpc(model: string, rag: boolean, configured: boolean, transform: any) {
 
     const isPreview = await isPreviewMode({});
     let ENDPOINT, FILE_SERVER
