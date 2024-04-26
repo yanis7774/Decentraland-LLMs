@@ -6,6 +6,33 @@ Instructions:
 
 This example scene contains 4 elements:
 
+
+## API/Local Models
+
+- OpenAI API, Claude2 API. Both are used for text generation, voice generation and image generation. Just add API Key
+- Local Models with Ollama:
+
+Install Ollama with the following command:
+```
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+Then run the following command to start the local models:
+
+Llama 3 (for servers with GPU):
+```
+ollama run llama3
+```
+
+Phi-3 (for CPU servers)
+```
+ollama run phi3
+```
+
+For ollama add endpoint:  
+
+
+
 ## NPCs with AI implementation
 
 There are 2 of them, they are created with createNpc() method in index.ts
