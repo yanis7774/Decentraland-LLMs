@@ -19,12 +19,12 @@ export function main() {
 
         setupUi();
 
-        setReceptionist(await createNpc('images/woman_Idle.glb',false,{
+        setReceptionist(await createNpc('models/woman_Idle.glb',false,{
             position: Vector3.create(8, 0, 8),
             rotation: Quaternion.Zero(),
             scale: Vector3.create(1, 1, 1),
         }));
-        setConfiguredNpc(await createNpc('images/woman_Idle.glb',true,{
+        setConfiguredNpc(await createNpc('models/hotel_boy_collider.glb',true,{
             position: Vector3.create(2, 0, 2),
             rotation: Quaternion.Zero(),
             scale: Vector3.create(1, 1, 1),

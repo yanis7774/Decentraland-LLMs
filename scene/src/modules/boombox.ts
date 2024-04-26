@@ -11,7 +11,7 @@ export class MusicBoombox {
         this.mainEntity = engine.addEntity();
         Transform.create(this.mainEntity, {position: Vector3.create(8, 0.4, 13), scale: Vector3.create(1, 1, 1)});
         this.invokePointer();
-        GltfContainer.create(this.mainEntity, {src: 'images/boombox.glb'});
+        GltfContainer.create(this.mainEntity, {src: 'models/boombox.glb'});
     }
 
     loadAdditionalData(input: string) {
