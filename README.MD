@@ -1,11 +1,5 @@
 README
 
-Video: https://twitter.com/TonyMo74/status/1740682713332637925
-
-Instructions:
-
-This example scene contains 4 elements:
-
 
 ## API/Local Models
 
