@@ -14,7 +14,7 @@ export function setConfiguredNpc(newnpc: any) {
     receptionist = newnpc;
 }
 
-export const productionUrl = "";
-export const productionFileUrl = "";
-export const previewFileUrl = "";
+export const productionFileUrl = "https://sdk7.mrt.games";
+export const previewFileUrl = "http://localhost:2574";
+export const productionUrl = "https://sdk7.mrt.games/serverAI";
 export const previewUrl = "http://localhost:2574";

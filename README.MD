@@ -1,10 +1,31 @@
 README
 
-Video: https://twitter.com/TonyMo74/status/1740682713332637925
 
-Instructions:
+## API/Local Models
 
-This example scene contains 4 elements:
+- OpenAI API, Claude2 API. Both are used for text generation, voice generation and image generation. Just add API Key
+- Local Models with Ollama:
+
+Install Ollama with the following command:
+```
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
+Then run the following command to start the local models:
+
+Llama 3 (for servers with GPU):
+```
+ollama run llama3
+```
+
+Phi-3 (for CPU servers)
+```
+ollama run phi3
+```
+
+For ollama add endpoint:  
+
+
 
 ## NPCs with AI implementation
 
@@ -16,7 +37,7 @@ CreateNpc() has transform and npc configuration object (like in basic dcl-npc-to
 Then it has ragModel, configuredMode, endpoint, room name and file server url
 
 - ragModel uses rag model generation (which is handled on backend, mostly inside the backend library)
-- configureModel specifies backend to use configuration for system message. Won't work with rag model
+- configureModel specifies backend to use configuration Role-play Characters. Won't work with rag model. Configured in globals.ts
 - endpoint is a url for server connection
 - room name is the room name from colyseus server which this project connects to
 - file server url is optional, if specified, voice and image files will be fetched from it and not from server url directly
