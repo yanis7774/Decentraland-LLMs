@@ -24,7 +24,7 @@ export function main() {
             rotation: Quaternion.Zero(),
             scale: Vector3.create(1, 1, 1),
         }));
-        setConfiguredNpc(await createNpc('images/woman_Idle.glb',true,{
+        setConfiguredNpc(await createNpc('images/hotel_boy_1.glb',true,{
             position: Vector3.create(2, 0, 2),
             rotation: Quaternion.Zero(),
             scale: Vector3.create(1, 1, 1),
