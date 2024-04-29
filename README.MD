@@ -23,7 +23,28 @@ Phi-3 (for CPU servers)
 ollama run phi3
 ```
 
-For ollama add endpoint:
+For ollama add endpoint: 
+
+
+## Local Stable Diffusion Models
+
+
+[Install](https://github.com/AUTOMATIC1111/stable-diffusion-webui?tab=readme-ov-file#installation-and-running) sd-webui according your machine's OS
+
+run with -api flag to enable API
+
+Use the function: 
+
+
+## Local Voice Generation Models
+
+Use the function: 
+
+
+## Local Voice Generation Models
+
+Use the function:
+
 
 ## NPCs with AI implementation
 
