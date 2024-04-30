@@ -9,7 +9,7 @@ import { setOSVoiceGeneration } from "llm_response/dist/generations";
 // Create and listen on 2567 (or PORT environment variable.)
 setupOpenAIKey(process.env.OPEN_API_KEY);
 setupReplicateKey(process.env.REPLICATE_API_TOKEN);
-setupInpaintUrl("/sdapi/v1/txt2img");
+setupInpaintUrl(process.env.INPAINT_URL);
 setOSVoiceGeneration(true);
 listen(appConfig, Number(process.env.PORT) || 3029);
 setTimeout(async ()=>{

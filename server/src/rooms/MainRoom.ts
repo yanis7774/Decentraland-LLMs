@@ -16,7 +16,7 @@ export class MainRoom extends Room<MainRoomState> {
         this.onMessage("getImage", async (client, msg) => {
             // may be changed back to old generation
             //const imageResponse = await generateAndSaveImage(msg.prompt, await appReadyPromise);
-            const imageResponse = await inpaintImage(msg.prompt);
+            const imageResponse = await inpaintImage(msg.prompt, await appReadyPromise);
             console.log("imageUrl", `${process.env.SERVER_URL ? process.env.SERVER_URL : ""}${imageResponse}`) // 
 
             setTimeout(()=>{
