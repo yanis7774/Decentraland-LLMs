@@ -89,6 +89,7 @@ export class NetworkManager {
         })
 
         this.room.onMessage("setMusic", async (msg) => {
+            console.log("SET MUSIC: ", msg);
             let playerSoundEntity = engine.addEntity();
             AudioStream.createOrReplace(playerSoundEntity, {
                 url: msg.music,

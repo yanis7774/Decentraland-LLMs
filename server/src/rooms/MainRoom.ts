@@ -26,9 +26,13 @@ export class MainRoom extends Room<MainRoomState> {
 
         // This listener part is used for generating music and sending it back
         this.onMessage("getMusic", async (client, msg) => {
-            const result = await generateMusic(msg.prompt);
-            //const result = await generateMusicOS(msg.prompt, await appReadyPromise);
-            client.send("setMusic", {music: result});
+            //const result = await generateMusic(msg.prompt);
+            const result = await generateMusicOS(msg.prompt, await appReadyPromise);
+
+            setTimeout(()=>{
+                client.send("setMusic", {music: result});
+            },2000)
+            
         })
 
         // This listener part is used to handle all NPC's interactions and generate prompts under different conditions

@@ -75,6 +75,7 @@ export default config({
         });
         app.use('/voices', express.static(path.join(__dirname,'../voices')));
         app.use('/images', express.static(path.join(__dirname,'../images')));
+        app.use('/music', express.static(path.join(__dirname,'../music')));
 
 
         },
