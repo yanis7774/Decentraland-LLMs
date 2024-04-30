@@ -1,7 +1,7 @@
 import {Client, Room} from "colyseus";
 import {MainRoomState} from "./schema/MainRoomState";
 import { aiSystemConfig, mainChain, voiceGenerationEnabled } from "../globals";
-import { getLLMTextAndVoice, modelTypes, generateAndSaveImage, generateMusic, getLLMTextAndVoiceConfigured } from "llm_response";
+import { getLLMTextAndVoice, modelTypes, generateAndSaveImage, generateMusic, getLLMTextAndVoiceConfigured, inpaintImage, generateMusicOS } from "llm_response";
 import { appReadyPromise } from "../app.config";
 
 
@@ -14,7 +14,9 @@ export class MainRoom extends Room<MainRoomState> {
 
         // This listener part is used for generating image for banner and sending it back
         this.onMessage("getImage", async (client, msg) => {
-            const imageResponse = await generateAndSaveImage(msg.prompt, await appReadyPromise);
+            // may be changed back to old generation
+            //const imageResponse = await generateAndSaveImage(msg.prompt, await appReadyPromise);
+            const imageResponse = await inpaintImage(msg.prompt);
             console.log("imageUrl", `${process.env.SERVER_URL ? process.env.SERVER_URL : ""}${imageResponse}`) // 
 
             setTimeout(()=>{
@@ -25,6 +27,7 @@ export class MainRoom extends Room<MainRoomState> {
         // This listener part is used for generating music and sending it back
         this.onMessage("getMusic", async (client, msg) => {
             const result = await generateMusic(msg.prompt);
+            //const result = await generateMusicOS(msg.prompt, await appReadyPromise);
             client.send("setMusic", {music: result});
         })
 

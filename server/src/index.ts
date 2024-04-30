@@ -2,12 +2,15 @@ import { listen } from "@colyseus/tools";
 
 // Import app config
 import appConfig from "./app.config";
-import { createRagChain, modelTypes, setupOpenAIKey, setupReplicateKey } from "llm_response";
+import { createRagChain, modelTypes, setupInpaintUrl, setupOpenAIKey, setupReplicateKey } from "llm_response";
 import { setMainChain } from "./globals";
+import { setOSVoiceGeneration } from "llm_response/dist/generations";
 
 // Create and listen on 2567 (or PORT environment variable.)
 setupOpenAIKey(process.env.OPEN_API_KEY);
 setupReplicateKey(process.env.REPLICATE_API_TOKEN);
+setupInpaintUrl("/sdapi/v1/txt2img");
+setOSVoiceGeneration(true);
 listen(appConfig, Number(process.env.PORT) || 3029);
 setTimeout(async ()=>{
     setMainChain(await createRagChain(modelTypes.ollama,{src:"./src/llms/data/mrt.txt",type:'txt'}));
