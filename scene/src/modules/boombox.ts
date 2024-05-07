@@ -1,7 +1,8 @@
 import { Entity, GltfContainer, InputAction, PointerEventType, PointerEvents, Transform, engine, inputSystem } from "@dcl/ecs";
 import { Quaternion, Vector3 } from "@dcl/ecs-math";
 import { globalRoom } from "./global";
-import { invokeInput } from "./input_ui";
+import { invokeInput } from "./ui/input_ui";
+import { createText } from "./titleText";
 
 export class MusicBoombox {
 
@@ -12,6 +13,8 @@ export class MusicBoombox {
         Transform.create(this.mainEntity, {position: Vector3.create(8, 0.4, 13), scale: Vector3.create(1, 1, 1)});
         this.invokePointer();
         GltfContainer.create(this.mainEntity, {src: 'models/boombox.glb'});
+
+        createText({position: Vector3.create(8, 2, 13), scale: Vector3.create(1, 1, 1)},"Music generation")
     }
 
     loadAdditionalData(input: string) {

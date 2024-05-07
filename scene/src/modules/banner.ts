@@ -15,8 +15,9 @@ import {
 } from "@dcl/sdk/ecs";
 import {Quaternion, Vector3} from "@dcl/sdk/math";
 import {globalRoom} from "./global";
-import {invokeInput} from "./input_ui";
+import {invokeInput} from "./ui/input_ui";
 import * as utils from '@dcl-sdk/utils';
+import { createText } from "./titleText";
 
 export let banner: CustomPainting;
 
@@ -28,7 +29,7 @@ export class CustomPainting {
     constructor() {
         banner = this;
         this.mainEntity = engine.addEntity();
-        Transform.create(this.mainEntity, {position: Vector3.create(8, 5, 6), scale: Vector3.create(10, 10, 0.1)});
+        Transform.create(this.mainEntity, {position: Vector3.create(8, 2, 6), scale: Vector3.create(4, 4, 0.1)});
         MeshRenderer.setBox(this.mainEntity);
         MeshCollider.setBox(this.mainEntity);
         this.picture = engine.addEntity();
@@ -38,6 +39,11 @@ export class CustomPainting {
             rot: Quaternion.create(0.0, 0.0, 0.0),
             scale: Vector3.create(1, 1, 1)
         };
+        let textParams = {
+            pos: Vector3.create(8, 4.5, 6),
+            rot: Quaternion.fromEulerDegrees(0.0, 180.0, 0.0),
+            scale: Vector3.create(1, 1, 1)
+        };
         Transform.create(this.picture, {
             parent: this.mainEntity,
             position: params.pos,
@@ -45,6 +51,11 @@ export class CustomPainting {
             scale: params.scale
         });
         this.invokePointer();
+        createText({
+            position: textParams.pos,
+            rotation: textParams.rot,
+            scale: textParams.scale
+        },"Image Generation")
     }
 
     loadAdditionalData(input: string) {

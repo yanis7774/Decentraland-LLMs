@@ -1,5 +1,5 @@
 import ReactEcs, {Input, Label, UiEntity} from "@dcl/sdk/react-ecs"
-import resources from "./resources"
+import resources from "../resources"
 import {Color4} from "@dcl/sdk/math"
 import {modalFontScale, modalScale, targetHeight} from "./UIGlobals"
 
@@ -10,8 +10,8 @@ let current_input: string = ""
 let input_callback: any = () => {
 }
 
-const modalWidth = resources.images.ui.ui_promts.notification.sourceWidth / 3
-const modalHeight = resources.images.ui.ui_promts.notification.sourceHeight / 3
+const modalWidth = resources.images.ui.ui_promts.notification.sourceWidth/2
+const modalHeight = resources.images.ui.ui_promts.notification.sourceHeight/2
 
 export const inputUI = () => {
     return (

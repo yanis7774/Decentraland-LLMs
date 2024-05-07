@@ -1,8 +1,9 @@
 import {Client, Room} from "colyseus";
 import {MainRoomState} from "./schema/MainRoomState";
 import { aiSystemConfig, mainChain, voiceGenerationEnabled } from "../globals";
-import { getLLMTextAndVoice, modelTypes, generateAndSaveImage, generateMusic, getLLMTextAndVoiceConfigured, inpaintImage, generateMusicOS } from "llm_response";
+import { getLLMTextAndVoice, modelTypes, generateAndSaveImage, generateMusic, getLLMTextAndVoiceConfigured, inpaintImage, generateMusicOS, getOllamaTextAndVoice } from "llm_response";
 import { appReadyPromise } from "../app.config";
+import { setOSVoiceGeneration } from "llm_response/dist/generations";
 
 
 export class MainRoom extends Room<MainRoomState> {
@@ -16,60 +17,70 @@ export class MainRoom extends Room<MainRoomState> {
         this.onMessage("getImage", async (client, msg) => {
             // may be changed back to old generation
             //const imageResponse = await generateAndSaveImage(msg.prompt, await appReadyPromise);
+            client.send("startLoading");
             const imageResponse = await inpaintImage(msg.prompt, await appReadyPromise);
             console.log("imageUrl", `${process.env.SERVER_URL ? process.env.SERVER_URL : ""}${imageResponse}`) // 
 
             setTimeout(()=>{
-                client.send("setImage", `${process.env.SERVER_URL ? process.env.SERVER_URL : ""}${imageResponse}`)
+                client.send("setImage", `${process.env.SERVER_URL ? process.env.SERVER_URL : ""}${imageResponse}`);
+                client.send("stopLoading");
             },1000)
         })
 
         // This listener part is used for generating music and sending it back
         this.onMessage("getMusic", async (client, msg) => {
             //const result = await generateMusic(msg.prompt);
+            client.send("startLoading");
             const result = await generateMusicOS(msg.prompt, await appReadyPromise);
 
             setTimeout(()=>{
                 client.send("setMusic", {music: result});
+                client.send("stopLoading");
             },2000)
             
         })
 
         // This listener part is used to handle all NPC's interactions and generate prompts under different conditions
         this.onMessage("getAnswer", async (client, msg) => {
-                let result;
-                // @ts-ignore
-                
-                let text = "";
-                let voiceUrl = "";
-                // @ts-ignore
-                if (msg.rag) {
-                    const result = await mainChain.getRagAnswer(msg.text,voiceGenerationEnabled,await appReadyPromise);
-                    text = result.response.text;
-                    voiceUrl = result.exposedUrl;
-                } else {
-                    let result = undefined;
-                    if (!msg.configured) {
-                        const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
-                        result = await getLLMTextAndVoice(systemMessage,msg.text,await appReadyPromise);
-                    } else {
-                        result = await getLLMTextAndVoiceConfigured(aiSystemConfig,msg.text,await appReadyPromise);
-                    }
-                    text = result.response;
-                    voiceUrl = result.exposedUrl;
-                    console.log("VOICE URL: ", voiceUrl);
-                }
+            console.log("WHERE???");
+            this.broadcast("startLoading");
+            let result;
+            // @ts-ignore
 
-                setTimeout(()=>{
-                    client.send("getAnswer", {
-                        answer: text,
-                        voiceUrl: voiceUrl,
-                        voiceEnabled: voiceGenerationEnabled,
-                        id: msg.id
-                    });
-                },5000)
+            let text = "";
+            let voiceUrl = "";
+            // @ts-ignore
+            if (msg.rag) {
+                setOSVoiceGeneration(false);
+                const result = await mainChain.getRagAnswer(msg.text,voiceGenerationEnabled,await appReadyPromise);
+                text = result.response.text;
+                voiceUrl = result.exposedUrl;
+            } else {
+                let result = undefined;
+                if (!msg.configured) {
+                    //const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
+                    //result = await getLLMTextAndVoice(systemMessage,msg.text,await appReadyPromise);
+                    setOSVoiceGeneration(true);
+                    result = await getOllamaTextAndVoice(text,await appReadyPromise);
+                } else {
+                    setOSVoiceGeneration(false);
+                    result = await getLLMTextAndVoiceConfigured(aiSystemConfig,msg.text,await appReadyPromise);
+                }
+                text = result.response;
+                voiceUrl = result.exposedUrl;
+                console.log("VOICE URL: ", voiceUrl);
             }
-        )
+
+            setTimeout(()=>{
+                client.send("getAnswer", {
+                    answer: text,
+                    voiceUrl: voiceUrl,
+                    voiceEnabled: voiceGenerationEnabled,
+                    id: msg.id
+                });
+                this.broadcast("stopLoading");
+            },5000)
+        })
     }
 
     async setUp(room: Room) {

@@ -4,7 +4,8 @@ import {inputUI} from './input_ui'
 import {render} from 'dcl-ui-toolkit'
 import {setModalScale, targetHeight, targetWidth} from './UIGlobals'
 import { npcUI } from './npc_ui'
-import { NpcUtilsInputUi } from 'dcl-npc-toolkit-ai-version'
+import { NpcUtilsInputUi, NpcUtilsLoadingUi } from 'dcl-npc-toolkit-ai-version'
+import { loadingUI } from './loading_ui'
 
 let devicePixelRatioScale: number = 1
 
@@ -20,6 +21,8 @@ const uiComponent = () => [
     inputUI(),
     npcUI(),
     NpcUtilsInputUi(),
+    NpcUtilsLoadingUi(),
+    loadingUI(),
     render()
 ]
 

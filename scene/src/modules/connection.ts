@@ -1,11 +1,12 @@
 import {Client, Room} from "colyseus.js"
 import {getCurrentRealm, isPreviewMode} from "~system/EnvironmentApi"
 import {getUserData} from "~system/UserIdentity"
-import {previewUrl, productionUrl, receptionist, setRoom} from "./global"
+import {previewUrl, productionUrl, setRoom} from "./global"
 import {banner} from "./banner"
 import {AudioStream, AvatarAttach, engine} from "@dcl/sdk/ecs";
-import { openDialogWindow, setCustomServerUrl } from "dcl-npc-toolkit-ai-version"
+import { setCustomServerUrl } from "dcl-npc-toolkit-ai-version"
 import * as utils from '@dcl-sdk/utils';
+import { closeLoading, invokeLoading } from "./ui/loading_ui"
 
 export class NetworkManager {
     client!: Client
@@ -102,6 +103,15 @@ export class NetworkManager {
             utils.timers.setTimeout(() => {
                 engine.removeEntity(playerSoundEntity);
             }, 100 * 1000);
+        })
+
+        this.room.onMessage("stopLoading", async (msg) => {
+            closeLoading();
+        })
+
+        this.room.onMessage("startLoading", async (msg) => {
+            console.log("LOADING ICON INIT");
+            invokeLoading();
         })
     }
 }
