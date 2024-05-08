@@ -7,24 +7,27 @@ import { createText } from "./titleText";
 export class MusicBoombox {
 
     mainEntity: Entity
+    local: boolean
 
-    constructor() {
+    constructor(local: boolean, position: Vector3) {
+        this.local = local;
         this.mainEntity = engine.addEntity();
-        Transform.create(this.mainEntity, {position: Vector3.create(8, 0.4, 13), scale: Vector3.create(1, 1, 1)});
+        Transform.create(this.mainEntity, {position: position, scale: Vector3.create(1, 1, 1)});
         this.invokePointer();
         GltfContainer.create(this.mainEntity, {src: 'models/boombox.glb'});
 
-        createText({position: Vector3.create(8, 2, 13), scale: Vector3.create(1, 1, 1)},"Music generation")
-    }
-
-    loadAdditionalData(input: string) {
-        // enable music?
+        let textParams = {
+            position: {...position},
+            scale: Vector3.create(1, 1, 1)
+        }
+        textParams.position.y += 2;
+        createText(textParams,local ? "Local Music Generation" : "Replicate Music Generation")
     }
 
     sendNewPrompt(input: string) {
         if (globalRoom != undefined) {
             console.log("SENDING MUSIC PROMPT", input)
-            globalRoom.send("getMusic", {
+            globalRoom.send(this.local ? "getLocalMusic" : "getMusic", {
                 prompt: input
             })
         }

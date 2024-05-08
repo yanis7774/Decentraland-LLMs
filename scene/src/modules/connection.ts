@@ -2,7 +2,7 @@ import {Client, Room} from "colyseus.js"
 import {getCurrentRealm, isPreviewMode} from "~system/EnvironmentApi"
 import {getUserData} from "~system/UserIdentity"
 import {previewUrl, productionUrl, setRoom} from "./global"
-import {banner} from "./banner"
+import {banner, inpaintBanner} from "./banner"
 import {AudioStream, AvatarAttach, engine} from "@dcl/sdk/ecs";
 import { setCustomServerUrl } from "dcl-npc-toolkit-ai-version"
 import * as utils from '@dcl-sdk/utils';
@@ -87,6 +87,11 @@ export class NetworkManager {
         this.room.onMessage("setImage", async (msg) => {
             console.log("SET IMAGE: ", msg);
             banner.loadAdditionalData(msg);
+        })
+
+        this.room.onMessage("setInpaintImage", async (msg) => {
+            console.log("SET INPAINT IMAGE: ", msg);
+            inpaintBanner.loadAdditionalData(msg);
         })
 
         this.room.onMessage("setMusic", async (msg) => {

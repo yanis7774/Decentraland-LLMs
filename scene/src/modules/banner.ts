@@ -20,30 +20,37 @@ import * as utils from '@dcl-sdk/utils';
 import { createText } from "./titleText";
 
 export let banner: CustomPainting;
+export let inpaintBanner: CustomPainting;
 
 export class CustomPainting {
 
     picture: Entity;
-    mainEntity: Entity
+    mainEntity: Entity;
+    inpaint: Boolean;
 
-    constructor() {
-        banner = this;
+    constructor(inpaint: boolean, position: Vector3) {
+        if (inpaint)
+            inpaintBanner = this
+        else
+            banner = this;
+        this.inpaint = inpaint;
         this.mainEntity = engine.addEntity();
-        Transform.create(this.mainEntity, {position: Vector3.create(8, 2, 6), scale: Vector3.create(4, 4, 0.1)});
+        Transform.create(this.mainEntity, {position: position, scale: Vector3.create(3, 3, 0.1)});
         MeshRenderer.setBox(this.mainEntity);
         MeshCollider.setBox(this.mainEntity);
         this.picture = engine.addEntity();
         MeshRenderer.setPlane(this.picture);
         const params = {
             pos: Vector3.create(0, 0, 2), // 0, 0.7
-            rot: Quaternion.create(0.0, 0.0, 0.0),
+            rot: Quaternion.fromEulerDegrees(0.0, 0.0, 0.0),
             scale: Vector3.create(1, 1, 1)
         };
         let textParams = {
-            pos: Vector3.create(8, 4.5, 6),
+            pos: {...position},
             rot: Quaternion.fromEulerDegrees(0.0, 180.0, 0.0),
             scale: Vector3.create(1, 1, 1)
         };
+        textParams.pos.y += 2;
         Transform.create(this.picture, {
             parent: this.mainEntity,
             position: params.pos,
@@ -55,7 +62,7 @@ export class CustomPainting {
             position: textParams.pos,
             rotation: textParams.rot,
             scale: textParams.scale
-        },"Image Generation")
+        },this.inpaint ? "Inpaint image generation" : "openAI Image Generation");
     }
 
     loadAdditionalData(input: string) {
@@ -71,7 +78,7 @@ export class CustomPainting {
     sendNewPrompt(input: string) {
         if (globalRoom != undefined) {
             console.log("SENDING PROMPT", input)
-            globalRoom.send("getImage", {
+            globalRoom.send(this.inpaint ? "getInpaintImage" : "getImage", {
                 prompt: input
             })
         }

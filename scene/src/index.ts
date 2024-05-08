@@ -28,14 +28,17 @@ export function main() {
             rotation: Quaternion.Zero(),
             scale: Vector3.create(1, 1, 1),
         }, "Configured OpenAI");
-        await createNpc('models/traderpunk.glb',true,false,{
+        await createNpc('models/hotel_boy_collider.glb',true,false,{
             position: Vector3.create(2, 0, 2),
             rotation: Quaternion.Zero(),
             scale: Vector3.create(1, 1, 1),
         }, "OpenAI + Rag");
         // set ollama
-        new CustomPainting();
-        new MusicBoombox();
+        new CustomPainting(true,Vector3.create(8, 2, 6));
+        new CustomPainting(false,Vector3.create(12, 2, 6));
+
+        new MusicBoombox(true,Vector3.create(8, 0.4, 13));
+        new MusicBoombox(false,Vector3.create(4, 0.4, 13));
 
     })
 
