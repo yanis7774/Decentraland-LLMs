@@ -88,7 +88,7 @@ export class MainRoom extends Room<MainRoomState> {
                     //const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
                     //result = await getLLMTextAndVoice(systemMessage,msg.text,await appReadyPromise);
                     setOSVoiceGeneration(true);
-                    result = await getOllamaTextAndVoice(text,await appReadyPromise);
+                    result = await getOllamaTextAndVoice(msg.text, await appReadyPromise);
                 } else {
                     setOSVoiceGeneration(false);
                     result = await getLLMTextAndVoiceConfigured(aiSystemConfig,msg.text,await appReadyPromise);
