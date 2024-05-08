@@ -61,7 +61,7 @@ export class MainRoom extends Room<MainRoomState> {
             const result = await generateMusicOS(msg.prompt, await appReadyPromise);
 
             setTimeout(()=>{
-                client.send("setMusic", {music: result});
+                client.send("setMusic", {music: `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${result}`});
                 client.send("stopLoading");
             },2000)
             
