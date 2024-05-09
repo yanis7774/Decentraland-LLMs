@@ -7,6 +7,7 @@ import {AudioStream, AvatarAttach, engine} from "@dcl/sdk/ecs";
 import { setCustomServerUrl } from "dcl-npc-toolkit-ai-version"
 import * as utils from '@dcl-sdk/utils';
 import { closeLoading, invokeLoading } from "./ui/loading_ui"
+import { tc } from "../utils/utils"
 
 export class NetworkManager {
     client!: Client
@@ -85,38 +86,48 @@ export class NetworkManager {
 
     async addLobbyListeners() {
         this.room.onMessage("setImage", async (msg) => {
-            console.log("SET IMAGE: ", msg);
-            banner.loadAdditionalData(msg);
+            tc("setImage",async ()=>{
+                console.log("SET IMAGE: ", msg);
+                banner.loadAdditionalData(msg);
+            })
         })
 
         this.room.onMessage("setInpaintImage", async (msg) => {
-            console.log("SET INPAINT IMAGE: ", msg);
-            inpaintBanner.loadAdditionalData(msg);
+            tc("setInpaintImage",async ()=>{
+                console.log("SET INPAINT IMAGE: ", msg);
+                inpaintBanner.loadAdditionalData(msg);
+            })
         })
 
         this.room.onMessage("setMusic", async (msg) => {
-            console.log("SET MUSIC: ", msg);
-            let playerSoundEntity = engine.addEntity();
-            AudioStream.createOrReplace(playerSoundEntity, {
-                url: msg.music,
-                playing: false,
-            });
-            AvatarAttach.createOrReplace(playerSoundEntity, {
-                anchorPointId: 0,
-            });
-            AudioStream.getMutable(playerSoundEntity).playing = true;
-            utils.timers.setTimeout(() => {
-                engine.removeEntity(playerSoundEntity);
-            }, 100 * 1000);
+            tc("setMusic",async ()=>{
+                console.log("SET MUSIC: ", msg);
+                let playerSoundEntity = engine.addEntity();
+                AudioStream.createOrReplace(playerSoundEntity, {
+                    url: msg.music,
+                    playing: false,
+                });
+                AvatarAttach.createOrReplace(playerSoundEntity, {
+                    anchorPointId: 0,
+                });
+                AudioStream.getMutable(playerSoundEntity).playing = true;
+                utils.timers.setTimeout(() => {
+                    engine.removeEntity(playerSoundEntity);
+                }, 100 * 1000);
+            })
         })
 
         this.room.onMessage("stopLoading", async (msg) => {
-            closeLoading();
+            tc("loadingIconStop",async ()=>{
+                closeLoading();
+            })
         })
 
         this.room.onMessage("startLoading", async (msg) => {
-            console.log("LOADING ICON INIT");
-            invokeLoading();
+            tc("loadingIconStart",async ()=>{
+                console.log("LOADING ICON INIT");
+                invokeLoading();
+            })
         })
     }
 }

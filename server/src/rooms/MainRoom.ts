@@ -4,6 +4,7 @@ import { aiSystemConfig, mainChain, voiceGenerationEnabled } from "../globals";
 import { getLLMTextAndVoice, modelTypes, generateAndSaveImage, generateMusic, getLLMTextAndVoiceConfigured, inpaintImage, generateMusicOS, getOllamaTextAndVoice } from "llm_response";
 import { appReadyPromise } from "../app.config";
 import { getOllamaText, setOSVoiceGeneration } from "llm_response/dist/generations";
+import { atc } from "../utils";
 
 
 export class MainRoom extends Room<MainRoomState> {
@@ -16,97 +17,101 @@ export class MainRoom extends Room<MainRoomState> {
         // This listener part is used for generating image for banner and sending it back
         this.onMessage("getImage", async (client, msg) => {
             // may be changed back to old generation
-
-            client.send("startLoading");
-            const imageResponse = await generateAndSaveImage(msg.prompt, await appReadyPromise);
-
-            console.log("imageUrl", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`) // 
-
-            setTimeout(()=>{
-                client.send("setImage", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`);
-                client.send("stopLoading");
-            },1000)
+            atc("getImage",async ()=>{
+                client.send("startLoading");
+                const imageResponse = await generateAndSaveImage(msg.prompt, await appReadyPromise);
+    
+                console.log("imageUrl", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`) // 
+    
+                setTimeout(()=>{
+                    client.send("setImage", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`);
+                    client.send("stopLoading");
+                },1000)
+            })
         })
 
         this.onMessage("getInpaintImage", async (client, msg) => {
             // may be changed back to old generation
             //const imageResponse = await generateAndSaveImage(msg.prompt, await appReadyPromise);
-            client.send("startLoading");
-            const imageResponse = await inpaintImage(msg.prompt, await appReadyPromise);
-            console.log("imageUrl", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`) // 
+            atc("getInpaintImage",async ()=>{
+                client.send("startLoading");
+                const imageResponse = await inpaintImage(msg.prompt, await appReadyPromise);
+                console.log("imageUrl", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`) // 
 
-            setTimeout(()=>{
-                client.send("setInpaintImage", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`);
-                client.send("stopLoading");
-            },1000)
+                setTimeout(()=>{
+                    client.send("setInpaintImage", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`);
+                    client.send("stopLoading");
+                },1000)
+            })
         })
 
         // This listener part is used for generating music and sending it back
         this.onMessage("getMusic", async (client, msg) => {
-            //const result = await generateMusic(msg.prompt);
-            client.send("startLoading");
-            const result = await generateMusic(msg.prompt);
+            atc("getMusic",async ()=>{
+                client.send("startLoading");
+                const result = await generateMusic(msg.prompt);
 
-            setTimeout(()=>{
-                client.send("setMusic", {music: result});
-                client.send("stopLoading");
-            },2000)
-            
+                setTimeout(()=>{
+                    client.send("setMusic", {music: result});
+                    client.send("stopLoading");
+                },2000)
+            });
         })
 
         // This listener part is used for generating music and sending it back
         this.onMessage("getLocalMusic", async (client, msg) => {
-            //const result = await generateMusic(msg.prompt);
-            client.send("startLoading");
-            const result = await generateMusicOS(msg.prompt, await appReadyPromise);
+            atc("getLocalMusic",async ()=>{
+                client.send("startLoading");
+                const result = await generateMusicOS(msg.prompt, await appReadyPromise);
 
-            setTimeout(()=>{
-                client.send("setMusic", {music: `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${result}`});
-                client.send("stopLoading");
-            },2000)
-            
+                setTimeout(()=>{
+                    client.send("setMusic", {music: `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${result}`});
+                    client.send("stopLoading");
+                },2000)
+            })
         })
 
         // This listener part is used to handle all NPC's interactions and generate prompts under different conditions
         this.onMessage("getAnswer", async (client, msg) => {
-            console.log("WHERE???");
-            this.broadcast("startLoading");
-            let result;
-            // @ts-ignore
 
-            let text = "";
-            let voiceUrl = "";
-            // @ts-ignore
-            if (msg.rag) {
-                setOSVoiceGeneration(false);
-                const result = await mainChain.getRagAnswer(msg.text,voiceGenerationEnabled,await appReadyPromise);
-                text = result.response.text;
-                voiceUrl = result.exposedUrl;
-            } else {
-                let result = undefined;
-                if (!msg.configured) {
-                    //const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
-                    //result = await getLLMTextAndVoice(systemMessage,msg.text,await appReadyPromise);
-                    setOSVoiceGeneration(true);
-                    result = await getOllamaTextAndVoice(msg.text, await appReadyPromise);
+            atc("getAnswer",async ()=>{
+                //const systemMessage = 'You are NPC that knows everything about Decentraland. You try to be nice with anyone and make friendship';
+                // Responses for queries are generated here
+                let text = "";
+                let voiceUrl = "";
+
+                if (msg.rag) {
+                    // When rag is on, it uses rag system setup in index.ts (openAI for now)
+                    setOSVoiceGeneration(false); // Voice generation from openAI is used
+                    const result = await mainChain.getRagAnswer(msg.text,voiceGenerationEnabled,await appReadyPromise);
+                    text = result.response.text;
+                    voiceUrl = result.exposedUrl;
                 } else {
-                    setOSVoiceGeneration(false);
-                    result = await getLLMTextAndVoiceConfigured(aiSystemConfig,msg.text,await appReadyPromise);
+                    // when rag is not used, it will then check configured flag
+                    let result = undefined;
+                    if (!msg.configured) {
+                        // Non configured leads to Ollama response generation
+                        setOSVoiceGeneration(true); // Local voice generation is used
+                        result = await getOllamaTextAndVoice(msg.text, await appReadyPromise);
+                    } else {
+                        // Configured leads to OpenAI response generation, including config file
+                        setOSVoiceGeneration(false); // Voice generation from openAI is used
+                        result = await getLLMTextAndVoiceConfigured(aiSystemConfig,msg.text,await appReadyPromise);
+                    }
+                    text = result.response;
+                    voiceUrl = result.exposedUrl;
+                    console.log("VOICE URL: ", voiceUrl);
                 }
-                text = result.response;
-                voiceUrl = result.exposedUrl;
-                console.log("VOICE URL: ", voiceUrl);
-            }
 
-            setTimeout(()=>{
-                client.send("getAnswer", {
-                    answer: text,
-                    voiceUrl: voiceUrl,
-                    voiceEnabled: voiceGenerationEnabled,
-                    id: msg.id
-                });
-                this.broadcast("stopLoading");
-            },5000)
+                setTimeout(()=>{
+                    client.send("getAnswer", {
+                        answer: text,
+                        voiceUrl: voiceUrl,
+                        voiceEnabled: voiceGenerationEnabled,
+                        id: msg.id
+                    });
+                },5000)
+            })
         })
     }
 

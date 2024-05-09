@@ -11,22 +11,41 @@ export function extractName(input: string): string {
 }
 
 export function enablePlayerSound(sound: string){
-    let playerSoundEntity: Entity
-    playerSoundEntity = engine.addEntity()
-
-    AudioSource.createOrReplace(playerSoundEntity,
-        {
-            audioClipUrl: sound,
-            playing: false,
+    tc("soundPlay",()=>{
+        let playerSoundEntity: Entity
+        playerSoundEntity = engine.addEntity()
+    
+        AudioSource.createOrReplace(playerSoundEntity,
+            {
+                audioClipUrl: sound,
+                playing: false,
+            })
+    
+        AvatarAttach.createOrReplace(playerSoundEntity,{
+            anchorPointId: AvatarAnchorPointType.AAPT_POSITION,
         })
-
-    AvatarAttach.createOrReplace(playerSoundEntity,{
-        anchorPointId: AvatarAnchorPointType.AAPT_POSITION,
+    
+        AudioSource.getMutable(playerSoundEntity).volume = 4
+        AudioSource.getMutable(playerSoundEntity).playing = true
+        utils.timers.setTimeout(() => {
+            engine.removeEntity(playerSoundEntity)
+        }, 10 * 1000);
     })
+}
 
-    AudioSource.getMutable(playerSoundEntity).volume = 4
-    AudioSource.getMutable(playerSoundEntity).playing = true
-    utils.timers.setTimeout(() => {
-        engine.removeEntity(playerSoundEntity)
-    }, 10 * 1000);
+// async wrapper
+export async function atc(name:string, func: any) {
+    try {
+        await func();
+    } catch (e: any) {
+        console.log(`Wrapper error: ${name}. ${e}`);
+    }
+}
+// basic wrapper
+export function tc(name:string, func: any) {
+    try {
+        func();
+    } catch (e: any) {
+        console.log(`Wrapper error: ${name}. ${e}`);
+    }
 }
