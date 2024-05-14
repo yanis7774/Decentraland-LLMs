@@ -5,7 +5,7 @@ import { getLLMTextAndVoice, modelTypes, generateAndSaveImage, generateMusic, ge
 import { appReadyPromise } from "../app.config";
 import { getOllamaText, setOSVoiceGeneration } from "llm_response/dist/generations";
 import { atc } from "../utils";
-
+require('dotenv').config();
 
 export class MainRoom extends Room<MainRoomState> {
     onCreate(options: any) {
