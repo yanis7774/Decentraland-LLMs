@@ -126,6 +126,13 @@ export class MainRoom extends Room<MainRoomState> {
     async setUp(room: Room) {
         try {
             console.log("Setting up lobby room...");
+            console.log("process.env.SERVER_FILE_URL", process.env.SERVER_FILE_URL)
+            console.log("process.env.PORT", process.env.PORT)
+            console.log("process.env.OPEN_API_KEY", process.env.OPEN_API_KEY)
+            console.log("process.env.REPLICATE_API_TOKEN", process.env.REPLICATE_API_TOKEN)
+            console.log("process.env.INPAINT_URL", process.env.INPAINT_URL)
+            console.log("process.env.OLLAMA_MODEL", process.env.OLLAMA_MODEL)
+            console.log("process.env.OLLAMA_BASE_URL", process.env.OLLAMA_BASE_URL)
         } catch (error) {
             console.error("Error in createImage handler:", error);
         }
