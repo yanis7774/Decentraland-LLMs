@@ -70,7 +70,7 @@ export class MainRoom extends Room<MainRoomState> {
         this.onMessage("getLocalMusic", async (client, msg) => {
             atc("getLocalMusic",async ()=>{
                 client.send("startLoading");
-                const result = await generateMusicOS(msg.prompt, await appReadyPromise);
+                const result = await generateMusic(msg.prompt);
 
                 setTimeout(()=>{
                     client.send("setMusic", {music: `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${result}`});
