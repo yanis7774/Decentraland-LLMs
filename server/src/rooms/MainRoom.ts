@@ -14,15 +14,23 @@ export class MainRoom extends Room<MainRoomState> {
         this.setSeatReservationTime(60);
         this.maxClients = 100;
 
+        console.log("process.env.SERVER_FILE_URL", process.env.SERVER_FILE_URL)
+        console.log("process.env.PORT", process.env.PORT)
+        console.log("process.env.OPEN_API_KEY", process.env.OPEN_API_KEY)
+        console.log("process.env.REPLICATE_API_TOKEN", process.env.REPLICATE_API_TOKEN)
+        console.log("process.env.INPAINT_URL", process.env.INPAINT_URL)
+        console.log("process.env.OLLAMA_MODEL", process.env.OLLAMA_MODEL)
+        console.log("process.env.OLLAMA_BASE_URL", process.env.OLLAMA_BASE_URL)
+
         // This listener part is used for generating image for banner and sending it back
         this.onMessage("getImage", async (client, msg) => {
             // may be changed back to old generation
             atc("getImage",async ()=>{
                 client.send("startLoading");
                 const imageResponse = await generateAndSaveImage(msg.prompt, await appReadyPromise);
-    
-                console.log("imageUrl", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`) // 
-    
+
+                console.log("imageUrl", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`) //
+
                 setTimeout(()=>{
                     client.send("setImage", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`);
                     client.send("stopLoading");
@@ -36,7 +44,7 @@ export class MainRoom extends Room<MainRoomState> {
             atc("getInpaintImage",async ()=>{
                 client.send("startLoading");
                 const imageResponse = await inpaintImage(msg.prompt, await appReadyPromise);
-                console.log("imageUrl", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`) // 
+                console.log("imageUrl", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`) //
 
                 setTimeout(()=>{
                     client.send("setInpaintImage", `${process.env.SERVER_FILE_URL ? process.env.SERVER_FILE_URL : ""}${imageResponse}`);
